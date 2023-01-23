@@ -1,0 +1,6 @@
+node_modules
+packages/frontend/node_modules
+packages/backend/node_modules
+packages/backend/dist
+naked-tees
+hentai-gifs

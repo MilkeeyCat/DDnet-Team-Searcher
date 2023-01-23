@@ -1,0 +1,64 @@
+@import "src/styles/colors";
+
+$animation-speed: .3s;
+
+.input-wrapper {
+    position: relative;
+
+    span {
+
+        &::before {
+            position: absolute;
+            content: attr(data-placeholder);
+            color: $app_color;
+            transition: all $animation-speed;
+            font-size: 10px;
+            left: 10px;
+            top: 5px;
+            opacity: 0;
+        }
+    }
+
+    & > .input:not(:placeholder-shown) + span::before {
+        opacity: 1;
+    }
+
+    & > .input:not(:placeholder-shown) {
+        padding-top: 15px;
+        padding-bottom: 5px;
+    }
+}
+
+.input {
+    transition: all $animation-speed;
+    background: rgba(0, 0, 0, .45);
+    border: 1px solid rgba(0, 0, 0, 0);
+    border-radius: 10px;
+    padding: 10px 12px;
+    caret-color: $high-emphasis-text;
+    color: $high-emphasis-text;
+    outline: 0;
+
+    @keyframes jiggle-wiggle {
+        0% {
+            transform: scale(0.9) translateY(-50%);
+        }
+
+        100% {
+            transform: scale(1.1) translateY(-50%);
+        }
+    }
+
+    &__icon {
+        position: absolute;
+        top: 50%;
+        //transform: translateY(-50%);
+        right: 10px;
+        animation: jiggle-wiggle .5s infinite alternate;
+
+
+        &-error {
+
+        }
+    }
+}

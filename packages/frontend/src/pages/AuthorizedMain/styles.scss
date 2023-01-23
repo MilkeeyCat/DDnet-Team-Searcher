@@ -1,0 +1,210 @@
+@import "src/styles/colors";
+
+.create-run {
+    color: $high-emphasis-text;
+
+    &__title {
+        font-size: 32px;
+        margin: 0;
+        padding: 25px 20px 0;
+    }
+
+    &__form {
+        &-header {
+            padding: 0 20px 0;
+        }
+
+        &-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+
+            .input-with-label {
+                max-width: 256px;
+                width: 100%;
+            }
+        }
+
+        &-title {
+            font-size: 20px;
+            margin: 20px 0 0;
+        }
+
+        &-subtitle {
+            font-size: 14px;
+            color: $medium-emphasis-text;
+            margin: 5px 0 0;
+        }
+
+        &-place-wrapper {
+            & > input:first-child {
+                margin-top: 15px;
+            }
+        }
+
+        &-description {
+            margin-top: 20px;
+
+            textarea {
+                height: 130px;
+                resize: none;
+            }
+        }
+
+        &-footer {
+            padding: 25px 20px;
+            background: #1A1714;
+            display: flex;
+            margin-top: 25px;
+            justify-content: space-between;
+            border-radius: 0 0 10px 10px;
+        }
+    }
+
+}
+
+.runs {
+    display: flex;
+    max-width: 1110px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+    //justify-content: space-around;
+
+    .run {
+        margin: 10px;
+    }
+}
+
+
+.run-info {
+    .pop-up__inner {
+        max-width: 600px;
+        width: 100%;
+    }
+
+    &__thumbnail {
+        max-width: 100%;
+        width: 100%;
+        max-height: 200px;
+        object-fit: cover;
+        border-radius: 15px 15px 0 0;
+    }
+
+    &__header-btns {
+        display: flex;
+        margin: 0;
+        list-style-type: none;
+        padding: 15px 0 0 0;
+        border-bottom: 1px solid #3F362B;
+    }
+
+    &__header-btn {
+        margin-left: 15px;
+        position: relative;
+        padding-bottom: 10px;
+        cursor: pointer;
+
+        &::after {
+            transition: all .3s;
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -1px;
+            width: 100%;
+            height: 2px;
+            border-radius: 100px;
+        }
+
+        &-active {
+
+            &::after {
+                background: #F6A740;
+            }
+        }
+    }
+
+    &__slides {
+        &-container {
+            display: flex;
+            max-width: calc(100% - 40px);
+            margin: 20px auto;
+            overflow: hidden;
+        }
+
+        &-item {
+            transition: all .5s;
+            max-width: 100%;
+            width: 100%;
+            flex-shrink: 0;
+            position: relative;
+            //padding: 10px;
+            //right: 100%;
+        }
+    }
+
+    &__map-name {
+        font-size: 25px;
+        font-weight: 600;
+        margin: 15px 0 0 0;
+    }
+
+    &__description, &__author {
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    &__author {
+        display: flex;
+        margin-top: 10px;
+
+        .avatar {
+            margin-right: 10px;
+        }
+    }
+
+    &__interested-players {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+    }
+
+    &__interested-player {
+        display: flex;
+        padding: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 5px;
+
+        input {
+            margin-right: 20px;
+        }
+
+        &-name {
+            margin-left: 10px;
+        }
+
+        &:not(&-active):hover {
+            background: #3F362B;
+        }
+
+        &-active {
+            background: #6e5e47;
+        }
+    }
+
+    &__footer {
+        background: #1A1714;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: flex-end;
+        border-radius: 0 0 10px 10px;
+        
+        &-btn {
+            background: #383129;
+            color: #F6A740;
+            border: 0;
+            padding: 8px 15px;
+            border-radius: 5px;
+            margin-left: 10px;
+        }
+    }
+}

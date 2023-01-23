@@ -1,0 +1,10 @@
+.checkbox {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: rgba(0, 0, 0, .45);
+
+    &:checked {
+        background: rgba(0, 0, 0, .45) url("src/assets/images/check-mark.png") no-repeat no-repeat center;
+    }
+}

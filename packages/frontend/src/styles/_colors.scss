@@ -1,0 +1,24 @@
+$app_color: #F6A740;
+
+$high-emphasis-text: rgba(255, 255, 255, .87);
+$medium-emphasis-text: rgba(255, 255, 255, .6);
+$disabled-text: rgba(255, 255, 255, .38);
+
+$app_background: linear-gradient(0, #181510, #201506 70.71%);
+
+$darker_1: #15120D;
+
+$brighter_1: #26221D;
+
+$brighter_2: #383129;
+
+$red: #ED4245;
+$app_green: #46C46E;
+
+$footer_background: #201B14;
+//$footer_background: #29241E;
+
+:root {
+    --app-color: #{$app_color};
+    --app-green: #{$app_green};
+}

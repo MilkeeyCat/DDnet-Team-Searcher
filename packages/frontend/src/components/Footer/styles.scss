@@ -1,0 +1,28 @@
+@import "src/styles/colors";
+
+.footer {
+    margin-top: auto;
+    padding: 20px 130px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: $high-emphasis-text;
+    background: $footer_background;
+
+    &__links {
+        display: flex;
+
+        & > p, & > a {
+            margin: 0 15px;
+        }
+
+        span {
+            color: $app_color;
+        }
+
+        a {
+            text-decoration: none;
+            color: $high-emphasis-text;
+        }
+    }
+}

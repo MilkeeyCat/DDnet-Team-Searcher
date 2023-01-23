@@ -1,0 +1,50 @@
+@import "src/styles/colors";
+
+.pop-up {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  color: $high-emphasis-text;
+  z-index: 10;
+  visibility: hidden;
+  transition: all .5s;
+  opacity: 0;
+
+  &_visible {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  &__bg {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, .8);
+  }
+
+  &__inner {
+    max-width: fit-content;
+    width: 100%;
+    position: absolute;
+    top: -100%;
+    left: 50%;
+    //padding: 25px 20px;
+    transform: translateX(-50%);
+    background: $brighter_1;
+    border-radius: 10px;
+    //flex-direction: column;
+    transition: all .5s;
+  }
+
+  &__text {
+    width: 100%;
+  }
+
+  &_visible .pop-up__inner {
+    top: 50px;
+  }
+}

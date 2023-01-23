@@ -1,0 +1,27 @@
+@import "src/styles/colors";
+
+.button {
+    background: none;
+    border: none;
+    color: $high-emphasis-text;
+    border-radius: 10px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+
+    &_filled {
+        background: $app_color;
+    }
+
+    &_bordered {
+        border: 1px solid $app_color;
+    }
+
+    img {
+        margin-right: 8px;
+    }
+
+    &:disabled {
+        opacity: .5;
+    }
+}
