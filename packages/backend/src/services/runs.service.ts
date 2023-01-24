@@ -37,21 +37,6 @@ class Service {
                 const server = serverQuery.rows[0]
 
                 run.connect_string = `password "${server.password}"; connect ${server.ip}:${server.port}`
-
-            //     try {
-            //         const data = await fs.promises.readFile(`/mnt/d/ddnet-server/ddnet/build/data/${server.file}.cfg`, "utf8")
-
-            //         const regex = /^sv_port (?<port>[0-9]+)$/
-
-            //         if (regex.test(data)) {
-            //             const res = data.match(regex)
-            //             let port = res?.groups?.port || ""
-
-            //             run.connect_string = `password "${server.password}"; connect ${server.ip}:${port}`
-            //         }
-            //     } catch (e) {
-            //         console.log("runs.service.ts:57 ERRRRRRRRRRRRRRRRROR")
-            //     }
             }
 
         }
@@ -66,17 +51,13 @@ class Service {
     async create(data: Run) {
         const res = await Db.query<{ id: string }>("INSERT INTO runs (author_id, place, map_name, teamsize, description, start_at) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id", [data.author_id, data.place, data.map_name, data.team_size, data.description, `${data.run_start_date} ${data.run_start_time}`])
 
-        const a = await Db.query("INSERT INTO interested_runs (user_id, run_id, in_team) VALUES($1, $2, $3)", [data.author_id, parseInt(res.rows[0].id), 1])
-
-        console.log(a)
+        return await Db.query("INSERT INTO interested_runs (user_id, run_id, in_team) VALUES($1, $2, $3)", [data.author_id, parseInt(res.rows[0].id), 1])
     }
 
     async update() {
         const runsShouldBeStarted = await Db.query<DBRun>("SELECT * FROM runs WHERE status = '0' AND start_at < CURRENT_TIMESTAMP")
 
         for (let run of runsShouldBeStarted.rows) {
-            console.log("Going to update run: ", run);
-            
             await this.start(run.id)
         }
     }

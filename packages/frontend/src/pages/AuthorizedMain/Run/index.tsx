@@ -3,13 +3,14 @@ import peopleIcon from "../../../assets/images/run-people.svg"
 import bellIcon from "../../../assets/images/run-bell.svg"
 import classNames from "classnames"
 import {useAppDispatch, useAppSelector} from "../../../utils/hooks/hooks"
-import {useState} from "react"
+import {useEffect, useRef, useState} from "react"
 import {EventStartTime} from "../EventStartTime"
 import {EventPlace} from "../EventPlace"
 import { useEndRunMutation, useSetIsInterestedMutation, useStartRunMutation } from "../../../api/runs-api"
 import { setIsInterested, updateRunStatus } from "../../../store/slices/runs"
 import { Run as RunType } from "../../../types/Run.type"
 import "./styles.scss"
+import { useOutsideClickHandler } from "../../../utils/hooks/useClickedOutside"
 
 interface OwnProps {
     run: RunType;
@@ -40,7 +41,14 @@ export const Run: React.FC<OwnProps> = ({onClick, run}) => {
     const userId = useAppSelector(state => state.app.user.id)
     const isOwner = parseInt(author_id) == userId
     const [isShowMorePanelHidden, setIsShowMorePanelHidden] = useState(true)
+    const ref = useRef<null | HTMLDivElement>(null)
 
+    const handleOnClickOutside = () => {
+        setIsShowMorePanelHidden(true)
+    }
+
+    useOutsideClickHandler(ref, !isShowMorePanelHidden, handleOnClickOutside)
+   
     const endRunCb = (id: number) => {
         return async () => {
             setIsShowMorePanelHidden(true)
@@ -99,13 +107,11 @@ export const Run: React.FC<OwnProps> = ({onClick, run}) => {
                     <Avatar src={null} username={username}/>
                     <div>
                         <div className={"run__more"}>
-                            <button className={"run__more-btn"} onClick={() => setIsShowMorePanelHidden(false)}>...</button>
-                            <div className={classNames({"run__more-panel": !isShowMorePanelHidden}, {"hidden": isShowMorePanelHidden})}>
-                                <button onClick={() => setIsShowMorePanelHidden(true)}>Useless button</button>
-
+                            <button className={"run__more-btn"} onClick={() => setIsShowMorePanelHidden(!isShowMorePanelHidden)}>...</button>
+                            <div data-hidden={isShowMorePanelHidden} ref={ref} className={classNames({"run__more-panel": !isShowMorePanelHidden}, {"hidden": isShowMorePanelHidden})}>
                                 {isOwner && <button onClick={() => setIsShowMorePanelHidden(true)}>Edit Run</button>}
-                                {isOwner && status == "1" && <button className={"run__more-panel-red"} onClick={endRunCb(parseInt(id))}>End Run</button>}
                                 {isOwner && status == "0" && <button onClick={startRunCb(parseInt(id))}>Start Run</button>}
+                                {isOwner && status == "1" && <button className={"run__more-panel-red"} onClick={endRunCb(parseInt(id))}>End Run</button>}
                             </div>
                         </div>
                         <button className={classNames("run__btn", {"run__btn-active": is_interested == "1"})} onClick={setIsInterestedCb(parseInt(id))}><img src={bellIcon}/>Interested</button>
