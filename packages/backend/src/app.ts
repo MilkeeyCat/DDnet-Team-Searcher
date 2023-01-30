@@ -13,6 +13,7 @@ const app = express()
 const port = 8080
 
 dotenv.config()
+app.use("/public", express.static("./public"))
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 app.use(cookieParser())

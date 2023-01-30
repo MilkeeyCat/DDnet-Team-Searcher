@@ -3,7 +3,7 @@ import pkg, { QueryResult } from "pg"
 const {Pool} = pkg
 
 export class Db {
-    static query<T extends {[column: string]: any}>(sql: string, params?: (string | number)[]): Promise<QueryResult<T>> {
+    static query<T extends {[column: string]: any}>(sql: string, params?: (string | number | null)[]): Promise<QueryResult<T>> {
         const pool = new Pool();
 
         return (async () => {

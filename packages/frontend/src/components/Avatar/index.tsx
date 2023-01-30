@@ -3,7 +3,7 @@ import "./styles.scss"
 interface OwnProps {
     src: string | null;
     username: string;
-    size?: number
+    size?: number;
 }
 
 function rainbow(numOfSteps: number, step: number) {

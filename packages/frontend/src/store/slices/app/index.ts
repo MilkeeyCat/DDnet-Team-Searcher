@@ -1,27 +1,14 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit"
 import { AppDispatch } from "../..";
 import { User } from "../../../types/User.type";
-
-interface Map {
-    name: string;
-    website: string;
-    thumbnail: string;
-    web_preview: string;
-    type: string;
-    points: number;
-    difficulty: number;
-    mapper: string;
-    release: string;
-    width: number;
-    height: number;
-    tiles: Array<string>
-}
+import { Map } from "@app/shared/types/Map.type"
 
 interface AppState {
     user: User;
     isAuthed: boolean;
     isCreateRunModalHidden: boolean;
-    maps: Array<Map>
+    isCreateEventModalHidden: boolean;
+    maps: Array<Map>;
 }
 
 const initialState: AppState = {
@@ -35,6 +22,7 @@ const initialState: AppState = {
     },
     isAuthed: false,
     isCreateRunModalHidden: true,
+    isCreateEventModalHidden: true,
     maps: []
 }
 
@@ -64,10 +52,13 @@ export const appSlice = createSlice({
         },
         setIsCreateRunModalHidden(state, action: PayloadAction<boolean>) {
             state.isCreateRunModalHidden = action.payload
+        },
+        setIsCreateEventModalHidden(state, action: PayloadAction<boolean>) {
+            state.isCreateEventModalHidden = action.payload
         }
     }
 })
 
-export const { setMaps, setIsAuthed, setUserData, setIsCreateRunModalHidden} = appSlice.actions
+export const { setMaps, setIsAuthed, setUserData, setIsCreateRunModalHidden, setIsCreateEventModalHidden} = appSlice.actions
 
 export default appSlice.reducer

@@ -3,21 +3,16 @@ import { Run } from "../../../types/Run.type";
 
 interface RunsState {
     runs: Array<Run>;
-    // availableMaps: Map[]
 }
 
 const initialState: RunsState = {
     runs: [],
-    // availableMaps: []
 }
 
-export const hintsSlice = createSlice({
+export const runsSlice = createSlice({
     name: "runsReducer",
     initialState,
     reducers: {
-        // setAvailableMaps(state, action: PayloadAction<Map[]>) {
-        //     state.availableMaps = action.payload
-        // },
         setRuns(state, action: PayloadAction<Run[]>) {
             state.runs = action.payload
         },
@@ -39,7 +34,6 @@ export const hintsSlice = createSlice({
     }
 })
 
-//action creators
-export const {setRuns, updateRunStatus, setIsInterested} = hintsSlice.actions
+export const {setRuns, updateRunStatus, setIsInterested} = runsSlice.actions
 
-export default hintsSlice.reducer
+export default runsSlice.reducer

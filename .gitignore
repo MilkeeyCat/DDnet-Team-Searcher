@@ -1,6 +1,9 @@
 node_modules
 packages/frontend/node_modules
 packages/backend/node_modules
-packages/backend/dist
+packages/backend/dist/**
+!packages/backend/dist/.gitkeep
+packages/backend/public/**
+!packages/backend/public/.gitkeep
 naked-tees
 hentai-gifs

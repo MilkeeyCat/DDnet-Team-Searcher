@@ -1,16 +1,17 @@
 import {Avatar} from "../../../components/Avatar"
 import peopleIcon from "../../../assets/images/run-people.svg"
 import bellIcon from "../../../assets/images/run-bell.svg"
+import checkMark from "../../../assets/images/check-mark.png"
 import classNames from "classnames"
 import {useAppDispatch, useAppSelector} from "../../../utils/hooks/hooks"
-import {useEffect, useRef, useState} from "react"
+import {useRef, useState} from "react"
 import {EventStartTime} from "../EventStartTime"
 import {EventPlace} from "../EventPlace"
 import { useEndRunMutation, useSetIsInterestedMutation, useStartRunMutation } from "../../../api/runs-api"
 import { setIsInterested, updateRunStatus } from "../../../store/slices/runs"
 import { Run as RunType } from "../../../types/Run.type"
-import "./styles.scss"
 import { useOutsideClickHandler } from "../../../utils/hooks/useClickedOutside"
+import "./styles.scss"
 
 interface OwnProps {
     run: RunType;
@@ -114,7 +115,7 @@ export const Run: React.FC<OwnProps> = ({onClick, run}) => {
                                 {isOwner && status == "1" && <button className={"run__more-panel-red"} onClick={endRunCb(parseInt(id))}>End Run</button>}
                             </div>
                         </div>
-                        <button className={classNames("run__btn", {"run__btn-active": is_interested == "1"})} onClick={setIsInterestedCb(parseInt(id))}><img src={bellIcon}/>Interested</button>
+                        <button className={classNames("run__btn", {"run__btn-active": is_interested == "1"})} onClick={setIsInterestedCb(parseInt(id))}><img src={is_interested == "1" ? checkMark : bellIcon}/>Interested</button>
                     </div>
                 </div>
             </div>

@@ -1,10 +1,9 @@
 import {Db} from "./db.service.js"
 import {ServersService} from "./servers.service.js"
-import {exec, execFile, spawn} from "child_process"
-import fs from "fs"
 import { GameServerService } from "./gameServer.service.js";
+import { RunRequest } from "@app/shared/types/RunRequest.type.js";
 
-interface Run {
+interface DBRun {
     place: "0" | "1";
     map_name: string;
     author_id: number;
@@ -12,9 +11,7 @@ interface Run {
     run_start_date: string;
     run_start_time: string;
     description: string;
-}
 
-interface DBRun extends Run {
     id: string;
     is_interested: string;
     interested: string;
@@ -25,10 +22,10 @@ interface DBRun extends Run {
 class Service {
     async getRuns(userId: string) {
         const runs = await Db.query<DBRun>(`
-            select runs.id, runs.map_name, runs.author_id, runs.place, runs.teamsize,
+            SELECT runs.id, runs.map_name, runs.author_id, runs.place, runs.teamsize,
             runs.description, runs.status, runs.start_at, users.username, users.avatar, runs.server_id,
-            (select count(*) as is_interested from interested_runs where user_id = $1 and run_id = runs.id),
-            (select count(*) as interested from interested_runs where run_id = runs.id)
+            (SELECT count(*) AS is_interested FROM interested_runs WHERE user_id = $1 AND run_id = runs.id),
+            (SELECT count(*) AS interested FROM interested_runs WHERE run_id = runs.id)
             FROM runs JOIN users ON users.id = runs.author_id order by runs.id desc`, [userId])
 
         for (const run of runs.rows) {
@@ -48,10 +45,10 @@ class Service {
         return await Db.query("UPDATE runs SET server_id = $2 WHERE id = $1", [runId, serverId])
     }
 
-    async create(data: Run) {
-        const res = await Db.query<{ id: string }>("INSERT INTO runs (author_id, place, map_name, teamsize, description, start_at) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id", [data.author_id, data.place, data.map_name, data.team_size, data.description, `${data.run_start_date} ${data.run_start_time}`])
+    async create(data: RunRequest & { authorId: number}) {
+        const res = await Db.query<{ id: string }>("INSERT INTO runs (author_id, place, map_name, teamsize, description, start_at) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id", [data.authorId, data.place, data.mapName, data.teamSize, data.description, `${data.runStartDate} ${data.runStartTime}`])
 
-        return await Db.query("INSERT INTO interested_runs (user_id, run_id, in_team) VALUES($1, $2, $3)", [data.author_id, parseInt(res.rows[0].id), 1])
+        return await Db.query("INSERT INTO interested_runs (user_id, run_id, in_team) VALUES($1, $2, $3)", [data.authorId, parseInt(res.rows[0].id), 1])
     }
 
     async update() {

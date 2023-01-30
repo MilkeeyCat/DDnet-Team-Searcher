@@ -1,1 +1,1 @@
-export type ValidatorType = (value: string | number) => undefined | string
+export type ValidatorType = (value: string | number | null) => undefined | string

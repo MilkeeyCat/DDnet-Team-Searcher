@@ -1,9 +1,7 @@
 import {Button} from "../ui/Button"
-import "./styles.scss"
 import logo from "../../assets/images/logo.png"
 import notification from "../../assets/images/notification.svg"
 import addIcon from "../../assets/images/add.svg"
-
 import loginIcon from "../../assets/images/login.png"
 import signUpIcon from "../../assets/images/sign-up.png"
 import {Link} from "react-router-dom"
@@ -11,8 +9,9 @@ import classNames from "classnames"
 import {useAppDispatch, useAppSelector} from "../../utils/hooks/hooks"
 import {Avatar} from "../Avatar"
 import {useRef, useState} from "react"
-import {setIsCreateRunModalHidden} from "../../store/slices/app"
+import {setIsCreateEventModalHidden, setIsCreateRunModalHidden} from "../../store/slices/app"
 import { useOutsideClickHandler } from "../../utils/hooks/useClickedOutside"
+import "./styles.scss"
 
 export const Header = () => {
     const dispatch = useAppDispatch()
@@ -21,17 +20,22 @@ export const Header = () => {
     const isAuthed = useAppSelector(state => state.app.isAuthed)
     const {username, avatar} = useAppSelector(state => state.app.user)
 
-    const handlething = () => {
+    const onOutsideClick = () => {
         setIsSelectionMenuHidden(true)
     }
 
-    useOutsideClickHandler(ref, !isCreateSelectionMenuHidden, handlething)
-
+    useOutsideClickHandler(ref, !isCreateSelectionMenuHidden, onOutsideClick)
 
     const createRun = () => {
         setIsSelectionMenuHidden(true)
         dispatch(setIsCreateRunModalHidden(false))
     }
+
+    const createEvent = () => {
+        setIsSelectionMenuHidden(true)
+        dispatch(setIsCreateEventModalHidden(false))
+    }
+
 
     return (
         <header className={classNames("header", {"login-register": !isAuthed})}>
@@ -44,11 +48,11 @@ export const Header = () => {
                     <Button styleType={"filled"}><Link to={"/login"}><img src={loginIcon} alt="login icon"/> Log in</Link></Button>
                 </div>
                 <div
-                    className={classNames({"header__right": isAuthed, "hidden": !isAuthed})}> {/* authed user header */}
+                    className={classNames({"header__right": isAuthed, "hidden": !isAuthed})}> {/* authed user part */}
                     <div className={"header__create-selection-menu-wrapper"}>
                         <Button styleType={isCreateSelectionMenuHidden ? "bordered" : "filled"} className={"header__create-btn"} onClick={() => setIsSelectionMenuHidden(!isCreateSelectionMenuHidden)}><img src={addIcon}/></Button>
                         <div ref={ref} className={classNames("header__create-selection-menu", {"hidden": isCreateSelectionMenuHidden})}>
-                            <div className={"header__create-selection-menu-item"}>Create event</div>
+                            <div className={"header__create-selection-menu-item"} onClick={createEvent}>Create event</div>
                             <div className={"header__create-selection-menu-item"} onClick={createRun}>Create run</div>
                         </div>
                     </div>

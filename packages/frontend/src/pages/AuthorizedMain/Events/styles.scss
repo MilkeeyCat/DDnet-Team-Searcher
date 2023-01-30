@@ -1,0 +1,10 @@
+.events {
+    display: flex;
+    max-width: 1110px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+
+    .event {
+        margin: 10px;
+    }
+}

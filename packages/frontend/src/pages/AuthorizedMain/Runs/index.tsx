@@ -1,5 +1,6 @@
 import { useAppSelector } from "../../../utils/hooks/hooks";
 import { Run } from "../Run";
+import "./styles.scss"
 
 export const Runs:React.FC<{onClick: (id: string)=>()=>void}> = ({onClick}) => {
     const runs = useAppSelector(state => state.runsReducer.runs)

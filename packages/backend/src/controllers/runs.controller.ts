@@ -3,15 +3,8 @@ import {Request, Response} from "express"
 import fetch from "node-fetch"
 import {RunsService} from "../services/runs.service.js"
 import { AuthMiddlewareResponse } from "@app/shared/types/AuthMiddlewareResponse.type";
-
-interface Run {
-    place: "0" | "1";
-    mapName: string;
-    teamSize: string;
-    runStartDate: string;
-    runStartTime: string;
-    description: string;
-}
+import { Map } from "@app/shared/types/Map.type.js";
+import { RunRequest } from "@app/shared/types/RunRequest.type"
 
 class Controller {
     async getRuns(_: Request, res: AuthMiddlewareResponse) {
@@ -20,19 +13,18 @@ class Controller {
         return res.json(result.rows)
     }
 
-    async create(req: Request<{}, {}, Run>, res: AuthMiddlewareResponse) {
+    async create(req: Request<{}, {}, RunRequest>, res: AuthMiddlewareResponse) {
         const {place, mapName, teamSize, runStartDate, runStartTime, description} = req.body
 
-        const request = await fetch("https://ddnet.tw/releases/maps.json")
+        const request = await fetch("https://ddnet.org/releases/maps.json")
         
-        //TODO: write type here xD
-        let availableMaps: any = await request.json()
-        availableMaps = availableMaps?.map((el: any) => el.name)
+        let availableMaps = await request.json() as Array<Map>
+        const mapNames = availableMaps?.map((map) => map.name)
 
         const errors: (string | { field: keyof RegistrationRequest, text: string })[] = []
 
         Object.keys({place, mapName, teamSize, runStartDate, runStartTime}).map((key) => {
-            if (req.body[key as keyof Run] === "" || req.body[key as keyof Run] === undefined) {
+            if (req.body[key as keyof RunRequest] === "" || req.body[key as keyof RunRequest] === undefined) {
                 errors.push({field: key as keyof RegistrationRequest, text: "Field is required"})
             }
         })
@@ -41,7 +33,7 @@ class Controller {
             errors.push("Invalid place field value")
         }
 
-        if (!availableMaps.includes(mapName)) {
+        if (!mapNames.includes(mapName)) {
             errors.push("Invalid map name")
         }
 
@@ -66,12 +58,12 @@ class Controller {
         } else {
             const result = await RunsService.create({
                 place,
-                team_size: teamSize,
+                teamSize,
                 description,
-                map_name: mapName,
-                run_start_date: runStartDate,
-                run_start_time: runStartTime,
-                author_id: parseInt(res.locals.user.id)
+                mapName,
+                runStartDate,
+                runStartTime,
+                authorId: parseInt(res.locals.user.id)
             })
 
             res.json({status: "RUN_CREATED_SUCCESSFULLY", message: "Run created successfully :)", run: {}})

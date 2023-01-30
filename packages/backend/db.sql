@@ -37,12 +37,36 @@ CREATE TABLE runs (
     server_id INT DEFAULT NULL
 );
 
+-- Events Table
+CREATE TABLE events (
+    id BIGSERIAL,
+    author_id INT NOT NULL,
+    place place,
+    map_name VARCHAR(255) NOT NULL,
+    teamsize INT NOT NULL,
+    description TEXT DEFAULT NULL,
+    start_at TIMESTAMP NOT NULL,
+    end_at TIMESTAMP DEFAULT NULL,
+    thumbnail VARCHAR(255) DEFAULT NULL,
+    status run_status DEFAULT '0',
+    server_id INT DEFAULT NULL
+);
 
--- Interested Table
+
+-- Interested Runs Table
 CREATE TABLE interested_runs (
     id BIGSERIAL,
     user_id INT NOT NULL,
     run_id INT NOT NULL,
+    in_team INT NOT NULL DEFAULT 0
+);
+
+-- Interested Events Table
+-- Im creating 2 absolutely same tables 🤔, maybe i can put the data in one table some how ¯\_(ツ)_/¯
+CREATE TABLE interested_events (
+    id BIGSERIAL,
+    user_id INT NOT NULL,
+    event_id INT NOT NULL,
     in_team INT NOT NULL DEFAULT 0
 );
 
