@@ -6,6 +6,7 @@
   "main": "dist/backend/src/app.js",
   "type": "module",
   "scripts": {
+    "start": "node dist/app.js",
     "build": "npx tsc",
     "dev": "concurrently \"nodemon -q dist/app.js\" \"npx tsc --watch\"",
     "setup-db": "node dist/config/setup-db.js"

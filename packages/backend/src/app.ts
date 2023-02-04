@@ -8,6 +8,8 @@ import {RunsService} from "./services/runs.service.js"
 import { EventsRouter } from "./routes/events.route.js"
 import { GameServerService } from "./services/gameServer.service.js"
 import { ServersService } from "./services/servers.service.js"
+import { json } from "body-parser"
+import path from "path"
 
 const app = express()
 const port = 8080
@@ -37,8 +39,8 @@ app.use("/api", UsersRouter)
 app.use("/api", RunsRouter)
 app.use("/api", EventsRouter)
 
-app.get("/", (_, res: Response) => {
-    res.json({status: "Hood"})
+app.get("/*", (_, res: Response) => {
+    res.sendFile("public/index.html", {root: "./"})
 })
 
 cron.schedule("* * * * *", async () => {
