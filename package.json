@@ -5,6 +5,9 @@
   ],
   "scripts": {
     "frontend": "npm run --workspace=@app/frontend",
-    "backend": "npm run --workspace=@app/backend"
+    "backend": "npm run --workspace=@app/backend",
+
+    "backend-start": "npm run backend start",
+    "setup-db": "npm run backend setub-db"
   }
 }
