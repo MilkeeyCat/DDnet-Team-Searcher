@@ -3,11 +3,12 @@ import { RegistrationRequest } from "@app/shared/types/RegistrationRequest.type"
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
 import { setIsAuthed, setUserData } from "../store/slices/app"
 import { User } from "../types/User.type"
+import { baseUrl } from "./baseUrl"
 
 export const usersApi = createApi({
     reducerPath: "usersApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: "http://localhost:8080/api",
+        baseUrl: `${baseUrl}/`,
         credentials: "include"
     }),
     endpoints: (build) => ({
