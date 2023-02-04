@@ -10,7 +10,6 @@
     "backend": "npm run --workspace=@app/backend",
 
     "start": "npm run backend start",
-    "backend-build": "npm run backend build",
     "setup-db": "npm run backend setup-db"
   }
 }
