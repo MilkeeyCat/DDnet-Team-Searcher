@@ -1,7 +1,9 @@
 {
   "name": "ddnet-team-searcher-website",
   "workspaces": [
-    "packages/*"
+    "packages/backend",
+    "packages/frontend",
+    "packages/shared"
   ],
   "scripts": {
     "frontend": "npm run --workspace=@app/frontend",
