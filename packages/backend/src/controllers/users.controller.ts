@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken"
 import { AuthMiddlewareResponse } from "@app/shared/types/AuthMiddlewareResponse.type"
 import { RegistrationRequest } from "@app/shared/types/RegistrationRequest.type.js"
 import { LoginRequest } from "@app/shared/types/LoginRequest.type"
+import { RunsService } from "../services/runs.service.js"
 
 class Controller {
     async register(req: Request<any, any, RegistrationRequest>, res: Response) {
@@ -25,9 +26,10 @@ class Controller {
             errors.push({field: "email", text: "Check if your email is right!"})
         }
 
-        const isUserExists = await UsersService.findUser({username, email}, true)
+        // const isUserExists = await UsersService.findUser({username, email}, true)
+        const isUserExists = await UsersService.isUserExistsByEmail(email)
 
-        if (isUserExists.rows.length) {
+        if (isUserExists) {
             errors.push("User with such a username or email already exists!")
         }
 
@@ -35,7 +37,7 @@ class Controller {
             res.status(400).json({status: "REGISTRATION_FAILED", message: errors[0]})
         }
 
-        if (!errors.length && !isUserExists.rows.length) {
+        if (!errors.length && !isUserExists) {
 
             const result = await UsersService.register({username, email, password, tier})
 
@@ -65,31 +67,65 @@ class Controller {
             return
         }
 
-        const user = await UsersService.findUser({username})
+        const isUserExists = await UsersService.isUserExistsByUsername(username)
+        
+        if(isUserExists) {
+            const user = await UsersService.getUserData(isUserExists, true)
 
-        if (user.rows.length !== 0 && (await bcrypt.compare(password, user.rows[0].password || ""))) {
-            const token = jwt.sign(
-                {id: user.rows[0].id, email: user.rows[0].email},
-                process.env.TOKEN_KEY as string,
-                {
-                    expiresIn: "2h",
-                }
-            )
-
-            res.cookie("token", token, {httpOnly: true})
-
-            res.json({status: "LOGIN_SUCCESSFUL"})
+            if (await bcrypt.compare(password, user.password || "")) {
+                const token = jwt.sign(
+                    {id: user.id, email: user.email},
+                    process.env.TOKEN_KEY as string,
+                    {
+                        expiresIn: "2h",
+                    }
+                    )
+                    
+                    res.cookie("token", token, {httpOnly: true})
+                    
+                    res.json({status: "LOGIN_SUCCESSFUL"})
+            }
         } else {
             res.status(400).json({status: "LOGIN_FAILED", message: "Username or password is wrong!"})
         }
     }
 
     async fetchUserData(_: Request, res: AuthMiddlewareResponse) {
-        const user = await UsersService.findUser({email: res.locals.user.email, id: res.locals.user.id})
+        const user = await UsersService.getUserData(res.locals.user.id)
 
-        const {password, ...data} = user.rows[0]        
+        res.json(user)
+    }
 
-        res.json(data)
+    async getUserProfile(req: Request<{userId: string}>, res: AuthMiddlewareResponse) {
+        const {userId} = req.params
+    
+        const user = await UsersService.getUserData(userId)
+
+        res.json(user)
+    }
+
+    async getUserRuns(req: Request<{userId: string}>, res: AuthMiddlewareResponse) {
+        const {userId} = req.params
+        
+        if(userId !== undefined) {
+            // show somebody's profile
+            const user = await UsersService.isUserExistsById(userId)
+
+            if(user) {
+                // user exists
+                const runs = await RunsService.getUserRuns(userId)
+
+                res.json(runs.rows)
+            } else {
+                // user does not exist
+                res.status(404).json({status: "USER_NOT_FOUND"})
+            }
+        } else {
+            // show own profile
+            const runs = await RunsService.getUserRuns(res.locals.user.id)
+
+            res.json(runs.rows)
+        }
     }
 }
 

@@ -39,8 +39,15 @@ export const usersApi = createApi({
                     // user is not authed ¯\_(ツ)_/¯
                 }
             },
+        }),
+        getUserProfile: build.query<{}, string>({
+            query: (userId) => {
+                return {
+                    url: `user/${userId}`
+                }
+            }
         })
     }),
 })
 
-export const { useRegisterUserMutation, useLoginUserMutation, useLazyGetUserDataQuery } = usersApi
+export const { useRegisterUserMutation, useLoginUserMutation, useLazyGetUserDataQuery, useLazyGetUserProfileQuery } = usersApi

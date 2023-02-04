@@ -29,7 +29,7 @@ export const Avatar: React.FC<OwnProps> = ({src, username, size = 20}) => {
     return (
         <div className={"avatar"} style={{"width": `${size}px`, "height": `${size}px`}}>
             {src === null ?
-                <p style={{"background": rainbow(username.charCodeAt(0), username.length)}} className={"avatar__letter"}>{username[0]}</p>
+                <p style={{"background": rainbow(username.charCodeAt(0), username.length), fontSize: size / 1.5}} className={"avatar__letter"}>{username[0]}</p>
                 :
                 <img src={src}/>
             }

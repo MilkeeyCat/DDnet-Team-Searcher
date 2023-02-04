@@ -2,7 +2,7 @@ interface OwnProps {
     color?: string
 }
 
-export const CalendarIcon: React.FC<OwnProps> = ({color = "#fff"}) => {
+export const CalendarIcon: React.FC<OwnProps> = ({color = "#000"}) => {
     return (
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
             <g clipPath="url(#clip0_457_1257)">

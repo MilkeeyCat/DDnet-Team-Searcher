@@ -6,8 +6,31 @@ CREATE TABLE users (
     password VARCHAR(255) NOT NULL UNIQUE,
     avatar VARCHAR(255) DEFAULT NULL,
     registration_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    tier SMALLINT
+    tier SMALLINT NOT NULL ,
+    verified SMALLINT NOT NULL DEFAULT 0 -- 0 or 1
 );
+
+INSERT INTO users(username, email, password, tier) VALUES('admin', 'admin@example.com', 'root', 6);
+
+-- Roles Table
+CREATE TABLE roles (
+    id SERIAL,
+    name VARCHAR(255) NOT NULL,
+    color VARCHAR(24) NOT NULL DEFAULT '#fff',
+    url VARCHAR(255) DEFAULT NULL,
+    can_delete_happenings SMALLINT,
+    can_edit_posts SMALLINT,
+    can_ban SMALLINT,
+    can_create_roles SMALLINT
+);
+
+--Users Roles
+CREATE TABLE users_roles (
+    user_id BIGINT,
+    role_id INT
+);
+
+INSERT INTO roles (name, color, url, can_delete_happenings, can_edit_posts, can_ban, can_create_roles) VALUES('admin', '#ff0000A1' 1, 1, 1, 1);
 
 -- Place Enum: 0 - our servers, 1 - other place
 DO $$ BEGIN

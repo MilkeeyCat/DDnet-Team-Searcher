@@ -26,7 +26,28 @@ class Service {
             runs.description, runs.status, runs.start_at, users.username, users.avatar, runs.server_id,
             (SELECT count(*) AS is_interested FROM interested_runs WHERE user_id = $1 AND run_id = runs.id),
             (SELECT count(*) AS interested FROM interested_runs WHERE run_id = runs.id)
-            FROM runs JOIN users ON users.id = runs.author_id order by runs.id desc`, [userId])
+            FROM runs JOIN users ON users.id = runs.author_id ORDER BY runs.id DESC`, [userId])
+
+        for (const run of runs.rows) {
+            if (!!run.server_id) {
+                const serverQuery = await ServersService.findServerById(run.server_id)
+                const server = serverQuery.rows[0]
+
+                run.connect_string = `password "${server.password}"; connect ${server.ip}:${server.port}`
+            }
+
+        }
+
+        return runs
+    }
+
+    async getUserRuns(userId: string) {
+        const runs = await Db.query<DBRun>(`
+            SELECT runs.id, runs.map_name, runs.author_id, runs.place, runs.teamsize,
+            runs.description, runs.status, runs.start_at, users.username, users.avatar, runs.server_id,
+            (SELECT count(*) AS is_interested FROM interested_runs WHERE user_id = $1 AND run_id = runs.id),
+            (SELECT count(*) AS interested FROM interested_runs WHERE run_id = runs.id)
+            FROM runs JOIN users ON users.id = runs.author_id WHERE runs.author_id = $2 ORDER BY runs.id DESC`, [userId, userId])
 
         for (const run of runs.rows) {
             if (!!run.server_id) {

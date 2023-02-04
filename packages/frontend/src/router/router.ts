@@ -3,6 +3,7 @@ import {AuthorizedMain} from "../pages/AuthorizedMain"
 import {Login} from "../pages/Login"
 import {Register} from "../pages/Register"
 import {ResetPassword} from "../pages/ResetPassword"
+import { Profile } from "../pages/Profile"
 
 export interface IRoute {
     path: string;
@@ -15,7 +16,8 @@ export enum RouteNames {
     LOGIN = "/login",
     REGISTER = "/register",
     RESET_PASSWORD = "/forgor-password",
-    LOGGEDIN = "/"
+    LOGGEDIN = "/",
+    PROFILE = "/profile/:userId?"
 }
 
 export const publicRoute: IRoute[] = [
@@ -46,6 +48,11 @@ export const privateRoute: IRoute[] = [
         path: RouteNames.LOGGEDIN,
         Component: AuthorizedMain,
         title: "Main Page"
+    },
+    {
+        path: RouteNames.PROFILE,
+        Component: Profile,
+        title: "Profile"
     }
 ]
 
