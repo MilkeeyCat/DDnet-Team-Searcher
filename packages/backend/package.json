@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "description": "Backend for DDrac Team Searcher.",
-  "main": "dist/backend/src/app.js",
+  "main": "dist/app.js",
   "type": "module",
   "scripts": {
     "start": "node dist/app.js",
