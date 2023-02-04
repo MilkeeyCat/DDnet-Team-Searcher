@@ -11,15 +11,10 @@ import pkg from "pg";
 const { Pool } = pkg;
 export class Db {
     static query(sql, params) {
-        let pool;
-        if (process.env.DATABASE_URL) {
-            pool = new Pool({
-                connectionString: process.env.DATABASE_URL
-            });
-        }
-        else {
-            pool = new Pool();
-        }
+        // const pool = new Pool({
+        // connectionString: process.env.DATABASE_URL
+        // })
+        const pool = new Pool();
         return (() => __awaiter(this, void 0, void 0, function* () {
             const client = yield pool.connect();
             try {
