@@ -4,16 +4,10 @@ const {Pool} = pkg
 
 export class Db {
     static query<T extends {[column: string]: any}>(sql: string, params?: (string | number | null)[]): Promise<QueryResult<T>> {
-        let pool;
-
-        if(process.env.DATABASE_URL) {
-            pool = new Pool({
-                connectionString: process.env.DATABASE_URL
-            });
-        } else {
-            pool = new Pool()
-        }
-
+        const pool = new Pool({
+            connectionString: process.env.DATABASE_URL
+        })
+        
         return (async () => {
             const client = await pool.connect()
             try {
