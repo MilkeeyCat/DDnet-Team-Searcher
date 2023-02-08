@@ -1,8 +1,8 @@
 export interface User {
-    id: string;
+    id: number;
     username: string;
     email: string;
-    registration_date: string;
+    created_at: string;
     avatar: string | null;
     tier: number;
     verified: 0 | 1;

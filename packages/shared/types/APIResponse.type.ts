@@ -1,4 +1,5 @@
-export interface APIResponse {
-    status: string;
-    message: (string | {field: string; text: string})[]
+export interface APIResponse<S = string, M = unknown> {
+    // status: string;
+    status: S;
+    data?: M;
 }

@@ -15,6 +15,7 @@ import { useLoginUserMutation } from "../../api/users-api"
 import { setIsAuthed } from "../../store/slices/app"
 
 import "./styles.scss"
+import { LoginResponse } from "@app/shared/types/api/users.types"
 
 export const Login = () => {
     const [ loginUser ] = useLoginUserMutation()
@@ -46,13 +47,15 @@ export const Login = () => {
 
             dispatch(setIsAuthed(true))
             navigate("/")
-        } catch (err: any) {
-            const error = err.data.message
-
+        } catch (e) { // if it's in catch block because of response code then err will have LoginResponse type
+            const err = e as LoginResponse
+            
+            const error = err.data
+            
             if(typeof error === "object") {
                 setFieldError(error.field, error.text)
             } else {
-                dispatch(addHint({type: "error", text: error}))
+                dispatch(addHint({type: "error", text: error || ""}))
             }            
         }      
     }

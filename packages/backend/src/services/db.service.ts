@@ -4,7 +4,15 @@ const {Pool} = pkg
 
 export class Db {
     static query<T extends {[column: string]: any}>(sql: string, params?: (string | number | null)[]): Promise<QueryResult<T>> {
-        const pool = new Pool();
+        let pool
+
+        if(process.env.DATABASE_URL) {
+            pool = new Pool({
+                connectionString: process.env.DATABASE_URL
+            })
+        } else {
+            pool = new Pool()
+        }
 
         return (async () => {
             const client = await pool.connect()
@@ -14,7 +22,7 @@ export class Db {
                 client.release()
             }
         })().catch(err => {
-            console.log("Lol something broke in db.service.ts");
+            console.log("Lol something broke in db.service.ts", err);
             throw Error(err.stack)
         })
     }

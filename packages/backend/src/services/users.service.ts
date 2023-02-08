@@ -1,65 +1,58 @@
 import {Db} from "./db.service.js"
 import bcrypt from "bcrypt"
 import { RegistrationRequest } from "@app/shared/types/RegistrationRequest.type.js";
+import { User, UserWithPassword } from "@app/shared/types/User.type.js"
+
+export interface DBUser {
+    id: string;
+    username: string;
+    avatar: null | string;
+}
 
 export class Service {
-    async register(data: RegistrationRequest) {
-        const encryptedPassword = await bcrypt.hash(data.password, 10)
-        return await Db.query("INSERT INTO users (username, email, password, tier) VALUES($1, $2, $3, $4)", [data.username, data.email, encryptedPassword, data.tier.toString()])
+    async register(data: RegistrationRequest): Promise<boolean> {
+        try {
+            const encryptedPassword = await bcrypt.hash(data.password, 10)
+            await Db.query("INSERT INTO users (username, email, password, tier) VALUES($1, $2, $3, $4)", [data.username, data.email, encryptedPassword, data.tier.toString()])
+
+            return true
+        } catch(e) {
+            return false
+        }
     }
 
     async isUserExistsByUsername(username: string): Promise<string | false> {
-        const req = await Db.query("SELECT id FROM users WHERE username = $1 LIMIT 1", [username])
+        const res = await Db.query<{id: string}>("SELECT id FROM users WHERE username = $1 LIMIT 1", [username])
     
-        if(req.rows.length) {
-            return req.rows[0].id
+        if(res.rowCount) {
+            return res.rows[0].id
         } else {
             return false
         }
     }
 
     async isUserExistsByEmail(userEmail: string): Promise<string | false> {
-        const req = await Db.query("SELECT id FROM users WHERE email = $1 LIMIT 1", [userEmail])
+        const res = await Db.query<{id: string}>("SELECT id FROM users WHERE email = $1 LIMIT 1", [userEmail])
     
-        if(req.rows.length) {
-            return req.rows[0].id
+        if(res.rowCount) {
+            return res.rows[0].id
         } else {
             return false
         }
     }
 
     async isUserExistsById(userId: string): Promise<string | false> {
-        const req = await Db.query("SELECT id FROM users WHERE id = $1 LIMIT 1", [userId])
-        console.log(req);
+        const res = await Db.query<{id: string}>("SELECT id FROM users WHERE id = $1 LIMIT 1", [userId])
         
-        if(req.rows.length) {
-            return req.rows[0].id
+        if(res.rowCount) {
+            return res.rows[0].id
         } else {
             return false
         }
     }
 
-    // async findUser(obj: {[key: string]: any}, or: boolean = false) {
-    //     let keys = Object.keys(obj)
-
-    //     const where: string = keys.reduce((prev, current) => {
-    //         const b = typeof obj[current] === "number" ? obj[current] : `'${obj[current]}'`
-
-    //         return prev + (prev !== "" ? ` ${or ? "OR" : "AND"} ${current} = ${b}` : `WHERE ${current} = ${b}`)
-    //     }, "")
-
-    //     return await Db.query<User>(`SELECT * FROM users ${where}`)
-    // }
-
-    // async getUserProfile(userId: string) {
-    //     const user = await Db.query<User>("SELECT * FROM users WHERE id = $1", [userId])
-    
-    //     delete (user.rows[0] as Partial<User>).password
-
-    //     return user
-    // }
-    async getUserData(userId: string, withPassword: boolean = false) {
-        const res = await Db.query(`SELECT id, username, email, avatar, registration_date, tier, verified${withPassword ? `, password` : ``} FROM users WHERE id = $1`, [userId])
+    async getUserData<T extends boolean = false>(userId: string, withPassword: T = false as T): Promise<T extends true ? UserWithPassword : User> {
+        const res = await Db.query<T extends true ? UserWithPassword : User>(`SELECT id::integer, username, email, avatar, created_at, tier, verified${withPassword ? `, password` : ``} FROM users WHERE id = $1`, [userId])
 
         return res.rows[0]
     }

@@ -5,10 +5,14 @@ import jwt from "jsonwebtoken"
 import { AuthMiddlewareResponse } from "@app/shared/types/AuthMiddlewareResponse.type"
 import { RegistrationRequest } from "@app/shared/types/RegistrationRequest.type.js"
 import { LoginRequest } from "@app/shared/types/LoginRequest.type"
-import { RunsService } from "../services/runs.service.js"
-
+// import { RunsService } from "../services/runs.service.js"
+import { RolesService } from "../services/roles.service.js"
+import { ResponseHandler } from "@app/shared/types/ReponseHandler.type"
+import { LoginResponse, RegistrationResponse, UserDataResponse, UserProfileResponse, UserRolesResponse, UserRunsResponse } from "@app/shared/types/api/users.types"
+import { HappeningsService } from "../services/happenings.service.js"
+ 
 class Controller {
-    async register(req: Request<any, any, RegistrationRequest>, res: Response) {
+    async register(req: Request<any, any, RegistrationRequest>, res: ResponseHandler<RegistrationResponse>): Promise<void> {
         const {username, email, password, tier} = req.body
 
         const errors: (string | { field: keyof RegistrationRequest, text: string })[] = []
@@ -26,7 +30,6 @@ class Controller {
             errors.push({field: "email", text: "Check if your email is right!"})
         }
 
-        // const isUserExists = await UsersService.findUser({username, email}, true)
         const isUserExists = await UsersService.isUserExistsByEmail(email)
 
         if (isUserExists) {
@@ -34,14 +37,17 @@ class Controller {
         }
 
         if (errors.length !== 0) {
-            res.status(400).json({status: "REGISTRATION_FAILED", message: errors[0]})
+            res.status(400).json({
+                status: "REGISTRATION_FAILED",
+                data: errors[0]
+            })
         }
 
         if (!errors.length && !isUserExists) {
 
             const result = await UsersService.register({username, email, password, tier})
 
-            if (result.rowCount === 1) {
+            if (result) {
                 res.json({status: "REGISTRATION_SUCCESSFUL"})
             } else {
                 // something bad happened :\
@@ -50,7 +56,7 @@ class Controller {
 
     }
 
-    async login(req: Request<any, any, { username: string, password: string }>, res: Response) {
+    async login(req: Request<any, any, { username: string, password: string }>, res: ResponseHandler<LoginResponse>): Promise<void> {
 
         const {username, password} = req.body
 
@@ -63,7 +69,10 @@ class Controller {
         })
 
         if (errors.length !== 0) {
-            res.status(400).json({status: "LOGIN_FAILED", message: errors[0]})
+            res.status(400).json({
+                status: "LOGIN_FAILED",
+                data: errors[0]
+            })
             return
         }
 
@@ -72,39 +81,61 @@ class Controller {
         if(isUserExists) {
             const user = await UsersService.getUserData(isUserExists, true)
 
+            console.log(user);
+            
+
             if (await bcrypt.compare(password, user.password || "")) {
                 const token = jwt.sign(
-                    {id: user.id, email: user.email},
-                    process.env.TOKEN_KEY as string,
-                    {
-                        expiresIn: "2h",
-                    }
+                        {id: user.id, email: user.email},
+                        process.env.TOKEN_KEY as string,
+                        {
+                            expiresIn: "2h",
+                        }
                     )
                     
                     res.cookie("token", token, {httpOnly: true})
                     
-                    res.json({status: "LOGIN_SUCCESSFUL"})
+                    res.json({
+                        status: "LOGIN_SUCCESSFUL"
+                    })
             }
         } else {
-            res.status(400).json({status: "LOGIN_FAILED", message: "Username or password is wrong!"})
+            res.status(400).json({
+                status: "LOGIN_FAILED",
+                data: "Username or password is wrong!"
+            })
         }
     }
 
-    async fetchUserData(_: Request, res: AuthMiddlewareResponse) {
+    async fetchUserData(_: Request, res: ResponseHandler<UserDataResponse, AuthMiddlewareResponse>): Promise<void> {
         const user = await UsersService.getUserData(res.locals.user.id)
 
-        res.json(user)
+        res.json({
+            status: "SUCCESS",
+            data: user
+        })
     }
 
-    async getUserProfile(req: Request<{userId: string}>, res: AuthMiddlewareResponse) {
+    async getUserProfile(req: Request<{userId: string}>, res: ResponseHandler<UserProfileResponse, AuthMiddlewareResponse>) {
         const {userId} = req.params
-    
-        const user = await UsersService.getUserData(userId)
 
-        res.json(user)
+        const isUserExists = await UsersService.isUserExistsById(userId)
+
+        if(isUserExists) {
+            const user = await UsersService.getUserData(userId)
+            
+            res.json({
+                status: "SUCCESS",
+                data: user
+            })
+        } else {
+            res.status(404).json({
+                status: "USER_NOT_FOUND"
+            })
+        }
     }
 
-    async getUserRuns(req: Request<{userId: string}>, res: AuthMiddlewareResponse) {
+    async getUserRoles(req: Request<{userId: string}>, res: ResponseHandler<UserRolesResponse, AuthMiddlewareResponse>): Promise<void> {
         const {userId} = req.params
         
         if(userId !== undefined) {
@@ -113,18 +144,54 @@ class Controller {
 
             if(user) {
                 // user exists
-                const runs = await RunsService.getUserRuns(userId)
+                const runs = await RolesService.getUserRoles(userId)
 
-                res.json(runs.rows)
+                res.json({
+                    status: "SUCCESS",
+                    data: runs.rows
+                })
             } else {
                 // user does not exist
                 res.status(404).json({status: "USER_NOT_FOUND"})
             }
         } else {
             // show own profile
-            const runs = await RunsService.getUserRuns(res.locals.user.id)
+            const runs = await RolesService.getUserRoles(res.locals.user.id)
 
-            res.json(runs.rows)
+            res.json({
+                status: "SUCCESS",
+                data: runs.rows
+            })
+        }
+    }
+
+    async getUserRuns(req: Request<{userId: string}>, res: ResponseHandler<UserRunsResponse, AuthMiddlewareResponse>): Promise<void> {
+        const {userId} = req.params
+        
+        if(userId !== undefined) {
+            // show somebody's profile
+            const user = await UsersService.isUserExistsById(userId)
+
+            if(user) {
+                // user exists
+                const runs = await HappeningsService.getUserRuns(userId)
+
+                res.json({
+                    status: "SUCCESS",
+                    data: runs.rows
+                })
+            } else {
+                // user does not exist
+                res.status(404).json({status: "USER_NOT_FOUND"})
+            }
+        } else {
+            // show own profile
+            const runs = await HappeningsService.getUserRuns(res.locals.user.id)
+
+            res.json({
+                status: "SUCCESS",
+                data: runs.rows
+            })
         }
     }
 }

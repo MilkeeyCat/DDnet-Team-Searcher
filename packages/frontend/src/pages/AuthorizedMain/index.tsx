@@ -1,29 +1,12 @@
-import {Modal} from "../../components/ui/Modal"
-import {Field, Form, Formik, FormikHelpers} from "formik"
-import {RadioInput} from "./RadioInput"
-import {InputWithLabel} from "./InputWithLabel"
-import {TextareaWithLabel} from "./TextareaWithLabel"
-import {Button} from "../../components/ui/Button"
 import {useEffect, useState} from "react"
 import {useAppDispatch, useAppSelector} from "../../utils/hooks/hooks"
-import {addHint} from "../../store/slices/hints"
-import {composeValidators} from "../../utils/composeValidators"
-import {required} from "../../utils/validators/required"
 import {getMaps, setIsCreateEventModalHidden, setIsCreateRunModalHidden} from "../../store/slices/app"
-import {RunInfoModal} from "./RunInfoModal"
-import { useCreateRunMutation, useLazyGetRunsQuery } from "../../api/runs-api"
-import { setRuns } from "../../store/slices/runs"
-import { setEvents } from "../../store/slices/events"
+import { setRuns, setEvents } from "../../store/slices/happenings"
 import { Runs } from "./Runs"
-
-import "./styles.scss"
 import { Events } from "./Events"
-import { CreateEventModal } from "./CreateEventModal"
-import { useLazyGetEventsQuery } from "../../api/events-api"
-import { EventInfoModal } from "./EventInfoModal"
-import { CreateRunModal } from "./CreateRunModal"
-
-
+import { useLazyGetEventsQuery, useLazyGetRunsQuery } from "../../api/happenings-api"
+import { CreateHappeningModal } from "./CreateHappeningModal"
+import { HappeningInfoModal } from "./HappeningInfoModal"
 
 export const AuthorizedMain = () => {
     const dispatch = useAppDispatch()
@@ -45,40 +28,38 @@ export const AuthorizedMain = () => {
     }, [])
 
     useEffect(() => {
-        //@ts-ignore TODO: WRITE FUCKING TYPES
-        dispatch(setRuns(getRunsData))
-        //@ts-ignore TODO: WRITE FUCKING TYPES
-        dispatch(setEvents(getEventsData))
+        dispatch(setRuns(getRunsData || []))
+        dispatch(setEvents(getEventsData || []))
     }, [getRunsData, getEventsData])
 
-    const runOnClick = (runId: string) => {
+    const runOnClick = (runId: number) => {
         return () => {
             setIsRunInfoModalOpened(true);
-            setRunInfoModalRunId(parseInt(runId))
+            setRunInfoModalRunId(runId)
         }
     }
 
-    const eventOnClick = (eventId: string) => {
+    const eventOnClick = (eventId: number) => {
         return () => {
             setIsEventInfoModalOpened(true);
-            setEventInfoModalEventId(parseInt(eventId))
+            setEventInfoModalEventId(eventId)
         }
     }
 
     return (
         <>
-            <CreateRunModal isVisible={!isCreateRunModalHidden} onClose={() => {
+            <CreateHappeningModal type="run" isVisible={!isCreateRunModalHidden} onClose={() => {
                 dispatch(setIsCreateRunModalHidden(true))
             }}/>
-            <CreateEventModal isVisible={!isCreateEventModalHidden} onClose={()=>{
+            <CreateHappeningModal type="event" isVisible={!isCreateEventModalHidden} onClose={()=>{
                 dispatch(setIsCreateEventModalHidden(true))
-            }}/>
+            }}/>            
 
             <Events onClick={eventOnClick}/>
             <Runs onClick={runOnClick}/>
 
-            {isRunInfoModalOpened && <RunInfoModal onClose={()=>setIsRunInfoModalOpened(false)} runId={runInfoModalRunId!}/>}
-            {isEventInfoModalOpened && <EventInfoModal onClose={()=>setIsEventInfoModalOpened(false)} eventId={eventInfoModalEventId!}/>}
+            {isEventInfoModalOpened && <HappeningInfoModal type="event" onClose={()=>setIsEventInfoModalOpened(false)} happeningId={eventInfoModalEventId!}/>}
+            {isRunInfoModalOpened && <HappeningInfoModal type="run" onClose={()=>setIsRunInfoModalOpened(false)} happeningId={runInfoModalRunId!}/>}
         </>
     )
 }

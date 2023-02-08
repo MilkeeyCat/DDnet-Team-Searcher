@@ -1,10 +1,14 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit"
 import { AppDispatch } from "../..";
-import { User } from "../../../types/User.type";
 import { Map } from "@app/shared/types/Map.type"
+import { User } from "@app/shared/types/User.type";
+
+type Nullable<T> = {
+    [P in keyof T]: T[P] | null;
+}
 
 interface AppState {
-    user: User;
+    user:  Nullable<User>;
     isAuthed: boolean;
     isCreateRunModalHidden: boolean;
     isCreateEventModalHidden: boolean;
@@ -17,7 +21,8 @@ const initialState: AppState = {
         username: null,
         email: null,
         tier: null,
-        registration_date: null,
+        created_at: null,
+        verified: null,
         avatar: null
     },
     isAuthed: false,

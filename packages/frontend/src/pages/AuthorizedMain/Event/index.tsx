@@ -7,10 +7,10 @@ import {useAppDispatch, useAppSelector} from "../../../utils/hooks/hooks"
 import {useRef, useState} from "react"
 import {EventStartTime} from "../EventStartTime"
 import {EventPlace} from "../EventPlace"
-import { Event as EventType } from "../../../types/Event.type"
+import { Event as EventType } from "@app/shared/types/Happenings.type"
 import { useOutsideClickHandler } from "../../../utils/hooks/useClickedOutside"
-import { useEndEventMutation, useSetIsInterestedMutation, useStartEventMutation } from "../../../api/events-api"
-import { setIsInterested, updateEventStatus } from "../../../store/slices/events"
+import { useEndHappeningMutation, useSetIsInterestedMutation, useStartHappeningMutation } from "../../../api/happenings-api"
+import { setIsInterestedInEvent, updateEventStatus } from "../../../store/slices/happenings"
 import "./styles.scss"
 
 interface OwnProps {
@@ -30,18 +30,18 @@ export const Event: React.FC<OwnProps> = ({onClick, event}) => {
         place,
         start_at,
         status,
-        teamsize,
+        team_size,
         username,
         connect_string,
         thumbnail
     } = event
 
     const dispatch = useAppDispatch()
-    const [endEvent] = useEndEventMutation()
-    const [startEvent] = useStartEventMutation()
+    const [endEvent] = useEndHappeningMutation()
+    const [startEvent] = useStartHappeningMutation()
     const [setIsInerested] = useSetIsInterestedMutation()
     const userId = useAppSelector(state => state.app.user.id)
-    const isOwner = parseInt(author_id) == userId
+    const isOwner = author_id == userId
     const [isShowMorePanelHidden, setIsShowMorePanelHidden] = useState(true)
     const ref = useRef<null | HTMLDivElement>(null)
 
@@ -58,7 +58,7 @@ export const Event: React.FC<OwnProps> = ({onClick, event}) => {
             try {
                 await endEvent(id).unwrap()
 
-                dispatch(updateEventStatus({id: id.toString(), status: "2"}))
+                dispatch(updateEventStatus({id, status: 2}))
             } catch (e: any) { // TODO: guess what's wrong here? riiiiight, no types
                 // some shit happened, i dunno what to show to users ¯\_(ツ)_/¯
             }
@@ -72,7 +72,7 @@ export const Event: React.FC<OwnProps> = ({onClick, event}) => {
             try {
                 await startEvent(id).unwrap()
 
-                dispatch(updateEventStatus({id: id.toString(), status: "1"}))
+                dispatch(updateEventStatus({id, status: 1}))
             } catch (e: any) { // TODO: guess what's wrong here? riiiiight, no types
                 // some shit happened, i dunno what to show to users ¯\_(ツ)_/¯
             }
@@ -82,9 +82,9 @@ export const Event: React.FC<OwnProps> = ({onClick, event}) => {
     const setIsInterestedCb = (id: number) => {
         return async () => {
             try {
-                const res: any = await setIsInerested(id).unwrap()
+                const res = await setIsInerested(id).unwrap()
 
-                dispatch(setIsInterested({eventId: id, isInterested: res.isInterested}))
+                dispatch(setIsInterestedInEvent({eventId: id, isInterested: res.data ? 1 : 0}))
             } catch (e: any) { // TODO: guess what's wrong here? riiiiight, no types
                 // some shit happened, i dunno what to show to users ¯\_(ツ)_/¯
             }
@@ -119,11 +119,11 @@ export const Event: React.FC<OwnProps> = ({onClick, event}) => {
                             <button className={"event__more-btn"} onClick={() => setIsShowMorePanelHidden(!isShowMorePanelHidden)}>...</button>
                             <div data-hidden={isShowMorePanelHidden} ref={ref} className={classNames({"event__more-panel": !isShowMorePanelHidden}, {"hidden": isShowMorePanelHidden})}>
                                 {isOwner && <button onClick={() => setIsShowMorePanelHidden(true)}>Edit Event</button>}
-                                {isOwner && status == "0" && <button onClick={startEventCb(parseInt(id))}>Start Event</button>}
-                                {isOwner && status == "1" && <button className={"event__more-panel-red"} onClick={endEventCb(parseInt(id))}>End Event</button>}
+                                {isOwner && status == 0 && <button onClick={startEventCb(id)}>Start Event</button>}
+                                {isOwner && status == 1 && <button className={"event__more-panel-red"} onClick={endEventCb(id)}>End Event</button>}
                             </div>
                         </div>
-                        <button className={classNames("event__btn", {"event__btn-active": is_interested == "1"})} onClick={setIsInterestedCb(parseInt(id))}><img src={is_interested == "1" ? checkMark : bellIcon}/>Interested</button>
+                        <button className={classNames("event__btn", {"event__btn-active": is_interested})} onClick={setIsInterestedCb(id)}><img src={is_interested ? checkMark : bellIcon}/>Interested</button>
                     </div>
                 </div>
             </div>

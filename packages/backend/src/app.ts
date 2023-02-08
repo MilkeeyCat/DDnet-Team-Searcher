@@ -2,18 +2,18 @@ import express, {Response} from "express"
 import dotenv from "dotenv"
 import cookieParser from "cookie-parser"
 import {UsersRouter} from "./routes/users.route.js"
-import {RunsRouter} from "./routes/runs.route.js"
-import cron from "node-cron"
-import {RunsService} from "./services/runs.service.js"
-import { EventsRouter } from "./routes/events.route.js"
 import { GameServerService } from "./services/gameServer.service.js"
 import { ServersService } from "./services/servers.service.js"
+import { HappeningsRouter } from "./routes/happenings.route.js"
+import cron from "node-cron"
+
 
 const app = express()
 const port = 8080
 
 dotenv.config()
 app.use("/public", express.static("./public"))
+
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 app.use(cookieParser())
@@ -34,15 +34,14 @@ app.use((req, res, next) => {
 
 
 app.use("/api", UsersRouter)
-app.use("/api", RunsRouter)
-app.use("/api", EventsRouter)
+app.use("/api", HappeningsRouter)
 
 app.get("/", (_, res: Response) => {
     res.json({status: "Hood"})
 })
 
 cron.schedule("* * * * *", async () => {
-    await RunsService.update()
+    // await RunsService.update()
 })
 
 app.listen(port, async () => {
