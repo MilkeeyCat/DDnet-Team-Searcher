@@ -1,4 +1,6 @@
-export interface User {
+import { Permissions } from "./Permissions.type.js";
+
+export type User = {
     id: number;
     username: string;
     email: string;
@@ -8,6 +10,10 @@ export interface User {
     verified: 0 | 1;
 }
 
-export interface UserWithPassword extends User {
+export type UserWithPassword = {
     password: string;
+} & User
+
+export type UserWithPermissions = User & {
+    permissions: Permissions
 }

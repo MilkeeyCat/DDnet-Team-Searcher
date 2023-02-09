@@ -9,9 +9,11 @@ import {EventStartTime} from "../EventStartTime"
 import {EventPlace} from "../EventPlace"
 import { Event as EventType } from "@app/shared/types/Happenings.type"
 import { useOutsideClickHandler } from "../../../utils/hooks/useClickedOutside"
-import { useEndHappeningMutation, useSetIsInterestedMutation, useStartHappeningMutation } from "../../../api/happenings-api"
-import { setIsInterestedInEvent, updateEventStatus } from "../../../store/slices/happenings"
+import { useDeleteHappeningMutation, useEndHappeningMutation, useSetIsInterestedMutation, useStartHappeningMutation } from "../../../api/happenings-api"
+import { setEvents, setIsInterestedInEvent, updateEventStatus } from "../../../store/slices/happenings"
 import "./styles.scss"
+import { Link } from "react-router-dom"
+import { addHint } from "../../../store/slices/hints"
 
 interface OwnProps {
     event: EventType;
@@ -39,11 +41,13 @@ export const Event: React.FC<OwnProps> = ({onClick, event}) => {
     const dispatch = useAppDispatch()
     const [endEvent] = useEndHappeningMutation()
     const [startEvent] = useStartHappeningMutation()
+    const [deleteEvent] = useDeleteHappeningMutation()
     const [setIsInerested] = useSetIsInterestedMutation()
     const userId = useAppSelector(state => state.app.user.id)
     const isOwner = author_id == userId
     const [isShowMorePanelHidden, setIsShowMorePanelHidden] = useState(true)
     const ref = useRef<null | HTMLDivElement>(null)
+    const events = useAppSelector(state => state.happeningsReducer.events)
 
     const handleOnClickOutside = () => {
         setIsShowMorePanelHidden(true)
@@ -59,8 +63,8 @@ export const Event: React.FC<OwnProps> = ({onClick, event}) => {
                 await endEvent(id).unwrap()
 
                 dispatch(updateEventStatus({id, status: 2}))
-            } catch (e: any) { // TODO: guess what's wrong here? riiiiight, no types
-                // some shit happened, i dunno what to show to users ¯\_(ツ)_/¯
+            } catch (e: any) {
+                console.log(e);
             }
         }
     }
@@ -73,8 +77,29 @@ export const Event: React.FC<OwnProps> = ({onClick, event}) => {
                 await startEvent(id).unwrap()
 
                 dispatch(updateEventStatus({id, status: 1}))
-            } catch (e: any) { // TODO: guess what's wrong here? riiiiight, no types
-                // some shit happened, i dunno what to show to users ¯\_(ツ)_/¯
+            } catch (e: any) {
+                console.log(e);
+            }
+        }
+    }
+
+    const deleteEventCb = (id: number) => {
+        return async () => {
+            setIsShowMorePanelHidden(true)
+            
+            try {
+                const res = await deleteEvent(id).unwrap()
+
+                if(res.status === "HAPPENING_DELETED_SUCCESSFULLY") {
+                    dispatch(setEvents([...events.filter(event => event.id != id)]))
+                } else {
+                    if(res.data) {
+                        dispatch(addHint({type: "error", text: res.data}))
+                    }
+                }
+
+            } catch (e: any) {
+                console.log(e);
             }
         }
     }
@@ -85,8 +110,8 @@ export const Event: React.FC<OwnProps> = ({onClick, event}) => {
                 const res = await setIsInerested(id).unwrap()
 
                 dispatch(setIsInterestedInEvent({eventId: id, isInterested: res.data ? 1 : 0}))
-            } catch (e: any) { // TODO: guess what's wrong here? riiiiight, no types
-                // some shit happened, i dunno what to show to users ¯\_(ツ)_/¯
+            } catch (e: any) {
+                console.log(e);
             }
         }
     }
@@ -98,7 +123,9 @@ export const Event: React.FC<OwnProps> = ({onClick, event}) => {
             <div className="event__inner">
                 <div className="row jc-sb">
                     <EventStartTime startAt={start_at} status={status}/>
-                    <Avatar src={null} username={username}/>
+                    <Link to={`/profile/${event.author_id}`} className="ml-auto">
+                        <Avatar src={null} username={username}/>
+                    </Link>
                     <div className={"event__interested"}>
                         <img src={peopleIcon}/>
                         <span>{interested}</span>
@@ -121,6 +148,7 @@ export const Event: React.FC<OwnProps> = ({onClick, event}) => {
                                 {isOwner && <button onClick={() => setIsShowMorePanelHidden(true)}>Edit Event</button>}
                                 {isOwner && status == 0 && <button onClick={startEventCb(id)}>Start Event</button>}
                                 {isOwner && status == 1 && <button className={"event__more-panel-red"} onClick={endEventCb(id)}>End Event</button>}
+                                {isOwner && status != 1 && <button className={"event__more-panel-red"} onClick={deleteEventCb(id)}>Delete Event</button>}
                             </div>
                         </div>
                         <button className={classNames("event__btn", {"event__btn-active": is_interested})} onClick={setIsInterestedCb(id)}><img src={is_interested ? checkMark : bellIcon}/>Interested</button>

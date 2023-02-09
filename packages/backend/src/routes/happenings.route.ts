@@ -87,9 +87,9 @@ Router.get("/happenings/all/runs", authMiddleware, HappeningsController.getAllRu
 Router.post("/happenings/create/event", authMiddleware, upload.single("thumbnail"), HappeningsController.createEvent)
 Router.post("/happenings/create/run", authMiddleware, HappeningsController.createRun)
 
-// Router.delete("/run/:runId/delete", authMiddleware, RunsController.delete)
 Router.put("/happenings/:happeningId/start", authMiddleware, HappeningsController.startHappening)
 Router.put("/happenings/:happeningId/end", authMiddleware, HappeningsController.endHappening)
+Router.delete("/happenings/:happeningId/delete", authMiddleware, HappeningsController.deleteHappening)
 Router.put("/happenings/:happeningId/interested", authMiddleware, HappeningsController.setIsInterested)
 Router.get("/happenings/:happeningId/interested", authMiddleware, HappeningsController.getInterestedPlayers)
 Router.put("/happenings/:happeningId/in-team/:userId", authMiddleware, HappeningsController.addOrRemoveFromTeam)

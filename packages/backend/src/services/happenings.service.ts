@@ -19,6 +19,7 @@ export interface DBHappening { // Types with DB prefix means fields which are st
     status: 0 | 1 | 2 | 3;
     server_id: number;
     thumbnail: null | string;
+    type: "string" | "event";
 }
 
 export interface DBInterestedHappening {
@@ -193,6 +194,16 @@ class Service {
             default:
                 console.log("Weird ass place value for run 0_o")
                 return new Promise<boolean>((resolve) => resolve(false))
+        }
+    }
+
+    async deleteHappening(happeningId: string): Promise<boolean> {
+        try {
+            await Db.query("DELETE FROM happenings WHERE id = $1", [happeningId])
+            return true
+        } catch(e) {
+            console.log(e);
+            return false
         }
     }
 

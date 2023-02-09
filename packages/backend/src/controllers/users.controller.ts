@@ -108,7 +108,7 @@ class Controller {
     }
 
     async fetchUserData(_: Request, res: ResponseHandler<UserDataResponse, AuthMiddlewareResponse>): Promise<void> {
-        const user = await UsersService.getUserData(res.locals.user.id)
+        const user = await UsersService.getUserData(res.locals.user.id, false, true)
 
         res.json({
             status: "SUCCESS",
@@ -122,7 +122,7 @@ class Controller {
         const isUserExists = await UsersService.isUserExistsById(userId)
 
         if(isUserExists) {
-            const user = await UsersService.getUserData(userId)
+            const user = await UsersService.getUserData(userId, false, false)
             
             res.json({
                 status: "SUCCESS",

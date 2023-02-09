@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/dist/query/react'
-import { AddOrRemoveFromTeamResponse, CreateEventResponse, CreateRunResponse, EndHappeningResponse, GetAllEventsResponse, GetAllRunsResponse, InterestedPlayersResponse, SetInterestedResponse, StartHappeningResponse } from '@app/shared/types/api/happenings.type'
+import { AddOrRemoveFromTeamResponse, CreateEventResponse, CreateRunResponse, DeleteHappeningResponse, EndHappeningResponse, GetAllEventsResponse, GetAllRunsResponse, InterestedPlayersResponse, SetInterestedResponse, StartHappeningResponse } from '@app/shared/types/api/happenings.type'
 
 export const happeningsApi = createApi({
     reducerPath: 'happeningsApi',
@@ -55,6 +55,12 @@ export const happeningsApi = createApi({
                 method: 'PUT',
             }),
         }),
+        deleteHappening: build.mutation<DeleteHappeningResponse, number>({
+            query: (id) => ({
+                url: `${id}/delete`,
+                method: "DELETE"
+            })
+        }),
         setIsInterested: build.mutation<SetInterestedResponse, number>({
             query: (id) => ({
                 url: `${id}/interested`,
@@ -85,6 +91,7 @@ export const {
     useCreateEventMutation,
     useStartHappeningMutation,
     useEndHappeningMutation,
+    useDeleteHappeningMutation,
     useSetIsInterestedMutation,
     useLazyGetInterestedPlayersQuery,
     useUpdateIsPlayerInTeamMutation,

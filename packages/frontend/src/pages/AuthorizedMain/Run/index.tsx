@@ -7,11 +7,13 @@ import {useAppDispatch, useAppSelector} from "../../../utils/hooks/hooks"
 import {useRef, useState} from "react"
 import {EventStartTime} from "../EventStartTime"
 import {EventPlace} from "../EventPlace"
-import { useEndHappeningMutation, useSetIsInterestedMutation, useStartHappeningMutation } from "../../../api/happenings-api"
-import { setIsInterestedInRun, updateRunStatus } from "../../../store/slices/happenings"
+import { useDeleteHappeningMutation, useEndHappeningMutation, useSetIsInterestedMutation, useStartHappeningMutation } from "../../../api/happenings-api"
+import { setIsInterestedInRun, setRuns, updateRunStatus } from "../../../store/slices/happenings"
 import { useOutsideClickHandler } from "../../../utils/hooks/useClickedOutside"
 import { Run as RunType } from "@app/shared/types/Happenings.type"
 import "./styles.scss"
+import { Link } from "react-router-dom"
+import { addHint } from "../../../store/slices/hints"
 
 interface OwnProps {
     run: RunType;
@@ -38,11 +40,13 @@ export const Run: React.FC<OwnProps> = ({onClick, run}) => {
     const dispatch = useAppDispatch()
     const [endRun] = useEndHappeningMutation()
     const [startRun] = useStartHappeningMutation()
+    const [deleteRun] = useDeleteHappeningMutation()
     const [setIsInerested] = useSetIsInterestedMutation()
     const userId = useAppSelector(state => state.app.user.id)
     const isOwner = author_id == userId
     const [isShowMorePanelHidden, setIsShowMorePanelHidden] = useState(true)
     const ref = useRef<null | HTMLDivElement>(null)
+    const runs = useAppSelector(state => state.happeningsReducer.runs)
 
     const handleOnClickOutside = () => {
         setIsShowMorePanelHidden(true)
@@ -58,8 +62,29 @@ export const Run: React.FC<OwnProps> = ({onClick, run}) => {
                 await endRun(id).unwrap()
 
                 dispatch(updateRunStatus({id, status: 2}))
-            } catch (e: any) { // TODO: guess what's wrong here? riiiiight, no types
-                // some shit happened, i dunno what to show to users ¯\_(ツ)_/¯
+            } catch (e: any) {
+                console.log(e);
+            }
+        }
+    }
+
+    const deleteRunCb = (id: number) => {
+        return async () => {
+            setIsShowMorePanelHidden(true)
+            
+            try {
+                const res = await deleteRun(id).unwrap()
+
+                if(res.status === "HAPPENING_DELETED_SUCCESSFULLY") {
+                    dispatch(setRuns([...runs.filter(run => run.id != id)]))
+                } else {
+                    if(res.data) {
+                        dispatch(addHint({type: "error", text: res.data}))
+                    }
+                }
+
+            } catch (e: any) {
+                console.log(e);
             }
         }
     }
@@ -72,8 +97,8 @@ export const Run: React.FC<OwnProps> = ({onClick, run}) => {
                 await startRun(id).unwrap()
 
                 dispatch(updateRunStatus({id, status: 1}))
-            } catch (e: any) { // TODO: guess what's wrong here? riiiiight, no types
-                // some shit happened, i dunno what to show to users ¯\_(ツ)_/¯
+            } catch (e: any) {
+                console.log(e);
             }
         }
     }
@@ -84,8 +109,8 @@ export const Run: React.FC<OwnProps> = ({onClick, run}) => {
                 const res = await setIsInerested(id).unwrap()
 
                 dispatch(setIsInterestedInRun({runId: id, isInterested: res.data ? 1 : 0}))
-            } catch (e: any) { // TODO: guess what's wrong here? riiiiight, no types
-                // some shit happened, i dunno what to show to users ¯\_(ツ)_/¯
+            } catch (e: any) {
+                console.log(e);
             }
         }
     }
@@ -105,7 +130,9 @@ export const Run: React.FC<OwnProps> = ({onClick, run}) => {
                 <p className="run__title" onClick={onClick}>{map_name}</p>
                 <p className="run__description">{description}</p>
                 <div className="run__footer row jc-sb">
-                    <Avatar src={null} username={username}/>
+                    <Link to={`/profile/${run.author_id}`}>
+                        <Avatar src={null} username={username}/>
+                    </Link>
                     <div>
                         <div className={"run__more"}>
                             <button className={"run__more-btn"} onClick={() => setIsShowMorePanelHidden(!isShowMorePanelHidden)}>...</button>
@@ -113,6 +140,7 @@ export const Run: React.FC<OwnProps> = ({onClick, run}) => {
                                 {isOwner && <button onClick={() => setIsShowMorePanelHidden(true)}>Edit Run</button>}
                                 {isOwner && status == 0 && <button onClick={startRunCb(id)}>Start Run</button>}
                                 {isOwner && status == 1 && <button className={"run__more-panel-red"} onClick={endRunCb(id)}>End Run</button>}
+                                {isOwner && status != 1 && <button className={"run__more-panel-red"} onClick={deleteRunCb(id)}>Delete Run</button>}
                             </div>
                         </div>
                         <button className={classNames("run__btn", {"run__btn-active": is_interested})} onClick={setIsInterestedCb(id)}><img src={is_interested ? checkMark : bellIcon}/>Interested</button>

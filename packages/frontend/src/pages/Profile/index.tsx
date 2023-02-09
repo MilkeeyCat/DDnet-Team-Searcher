@@ -29,7 +29,7 @@ export const Profile = () => {
                 <div className="flex justify-center">
                     <Avatar size={285} src={null} username={user?.username || ""} />
                     <div className="text-[white] ml-[65px]">
-                        <p className="text-2xl mt-9">{user?.username} <VerifiedIcon className="inline-block" color="blue"/></p>
+                        <p className="text-2xl mt-9">{user?.username} {user?.verified === 1 && <VerifiedIcon className="inline-block" color="blue"/>}</p>
                             <div className="flex flex-wrap">
                                 {roles && roles.map(role => (
                                     <div className="mr-3 mt-2 p-1.5 rounded-[5px]" style={{backgroundColor: `${role.color}1A`, border: `1px solid ${role.color}`}}>

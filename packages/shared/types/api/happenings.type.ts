@@ -22,6 +22,8 @@ export type StartHappeningResponse = APIResponse<"HAPPENING_NOT_FOUND" | "PERMIS
 
 export type EndHappeningResponse = APIResponse<"HAPPENING_NOT_FOUND" | "PERMISSION_DENIED" | "HAPPENING_ENDED_SUCCESSFULLY">
 
+export type DeleteHappeningResponse = APIResponse<"HAPPENING_DELETED_SUCCESSFULLY" | "ERROR_OCCURED", string>
+
 export type SetInterestedResponse = APIResponse<"SET_INTERESTED_SUCCESSFULLY" | "SET_INTERESTED_FAILED", boolean>
 
 export type InterestedPlayersResponse = APIResponse<"SUCCESS", Array<InterestedPlayer>>

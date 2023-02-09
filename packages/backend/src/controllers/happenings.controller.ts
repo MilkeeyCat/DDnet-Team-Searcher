@@ -2,7 +2,7 @@ import { AuthMiddlewareResponse } from "@app/shared/types/AuthMiddlewareResponse
 import { ResponseHandler } from "@app/shared/types/ReponseHandler.type"
 import { Request } from "express"
 import { HappeningsService } from "../services/happenings.service.js"
-import { AddOrRemoveFromTeamResponse, CreateEventResponse, CreateRunResponse, EndHappeningResponse, GetAllEventsResponse, GetAllRunsResponse, InterestedPlayersResponse, SetInterestedResponse, StartHappeningResponse } from "@app/shared/types/api/happenings.type.js"
+import { AddOrRemoveFromTeamResponse, CreateEventResponse, CreateRunResponse, DeleteHappeningResponse, EndHappeningResponse, GetAllEventsResponse, GetAllRunsResponse, InterestedPlayersResponse, SetInterestedResponse, StartHappeningResponse } from "@app/shared/types/api/happenings.type.js"
 import { RunRequest } from "@app/shared/types/RunRequest.type.js"
 import { Map } from "@app/shared/types/Map.type.js"
 import { EventRequest } from "@app/shared/types/EventRequest.type.js"
@@ -96,7 +96,7 @@ class Controller {
         //@ts-ignore I know it's fuckind bad but I really coudnt find any better solution. Im sorry :(
         const errors: (string | { field: keyof EventRequest, text: string })[] = req.errors
 
-        if(errors.length) {
+        if(errors?.length) {
             res.status(400).json({
                 status: "EVENT_CREATION_FAILED",
                 data: errors[0]
@@ -174,6 +174,38 @@ class Controller {
         } else {
             res.status(400).json({
                 status: "PERMISSION_DENIED"
+            })
+        }
+    }
+
+    async deleteHappening(req: Request<{happeningId: string}>, res: ResponseHandler<DeleteHappeningResponse, AuthMiddlewareResponse>): Promise<void> {
+        const happening = await HappeningsService.findHappeningById(req.params.happeningId)
+        
+
+        if(!happening.rowCount) {
+            res.status(404).end()
+            return
+        } else if (happening.rows[0].author_id !== parseInt(res.locals.user.id)) {
+            res.status(404).end()
+            return
+        } else if (happening.rows[0].status == 1) {
+            res.json({
+                status: "ERROR_OCCURED",
+                data: `Cant delete ${happening.rows[0].type} while it is happening now`
+            })
+            return
+        } 
+        
+        const result = await HappeningsService.deleteHappening(req.params.happeningId)
+        
+        if(result) {
+            res.json({
+                status: "HAPPENING_DELETED_SUCCESSFULLY"
+            })
+        } else {
+            res.status(500).json({
+                status: "ERROR_OCCURED",
+                data: "Some error has occured, couldnt delete the " + happening.rows[0].type
             })
         }
     }

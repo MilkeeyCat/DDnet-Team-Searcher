@@ -17,10 +17,10 @@ CREATE TABLE roles (
     name VARCHAR(255) NOT NULL,
     color VARCHAR(24) NOT NULL DEFAULT '#fff',
     url VARCHAR(255) DEFAULT NULL,
-    can_delete_happenings SMALLINT,
-    can_edit_posts SMALLINT,
-    can_ban SMALLINT,
-    can_create_roles SMALLINT
+    can_delete_happenings SMALLINT DEFAULT 0,
+    can_edit_posts SMALLINT DEFAULT 0,
+    can_ban SMALLINT DEFAULT 0,
+    can_create_roles SMALLINT DEFAULT 0
 );
 
 -- Game Servers Table
@@ -38,9 +38,11 @@ CREATE TABLE users_roles (
     user_id BIGINT,
     role_id INT,
     FOREIGN KEY(user_id)
-        REFERENCES users(id),
+        REFERENCES users(id)
+        ON DELETE CASCADE,
     FOREIGN KEY(role_id)
         REFERENCES roles(id)
+        ON DELETE CASCADE
 );
 
 INSERT INTO roles (name, color, can_delete_happenings, can_edit_posts, can_ban, can_create_roles) VALUES('admin', '#ff0000A1', 1, 1, 1, 1);
@@ -66,9 +68,11 @@ CREATE TABLE happenings (
     thumbnail VARCHAR(255) DEFAULT NULL,
     type happening_type,
     FOREIGN KEY(author_id)
-		REFERENCES users(id),
+		REFERENCES users(id)
+        ON DELETE CASCADE,
     FOREIGN KEY(server_id)
         REFERENCES servers(id)
+        ON DELETE SET NULL
 );
 
 -- Table to indicate interested players =]
@@ -78,7 +82,9 @@ CREATE TABLE interested_happenings (
     happening_id INT NOT NULL,
     in_team SMALLINT NOT NULL DEFAULT 0, -- 0 or 1
     FOREIGN KEY(user_id)
-        REFERENCES users(id),
+        REFERENCES users(id)
+        ON DELETE CASCADE,
     FOREIGN KEY(happening_id)
         REFERENCES happenings(id)
+        ON DELETE CASCADE
 );

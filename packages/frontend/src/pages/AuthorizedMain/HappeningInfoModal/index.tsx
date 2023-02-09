@@ -8,6 +8,7 @@ import classNames from "classnames"
 import { useLazyGetInterestedPlayersQuery, useUpdateIsPlayerInTeamMutation } from "../../../api/happenings-api"
 import { InterestedPlayer } from "@app/shared/types/InterestedPlayer.type"
 import { Event, Run } from "@app/shared/types/Happenings.type"
+import { Link } from "react-router-dom"
 
 interface OwnProps {
     happeningId: number;
@@ -103,7 +104,9 @@ export const HappeningInfoModal: React.FC<OwnProps> = ({type, happeningId, onClo
                                        checked={user.in_team === 1}
                                        onChange={inputCb(happening.author_id, user.id)}
                                        readOnly={user.id == happening.author_id}/>}
-                                <Avatar src={user.avatar} username={user.username}/>
+                                <Link to={`/profile/${user.id}`}>
+                                    <Avatar src={user.avatar} username={user.username}/>
+                                </Link>
                                 <span className="ml-2.5">{user.username}</span>
                             </li>
                         ))}

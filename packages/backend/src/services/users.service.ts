@@ -1,7 +1,9 @@
 import {Db} from "./db.service.js"
 import bcrypt from "bcrypt"
 import { RegistrationRequest } from "@app/shared/types/RegistrationRequest.type.js";
-import { User, UserWithPassword } from "@app/shared/types/User.type.js"
+import { User, UserWithPassword, UserWithPermissions } from "@app/shared/types/User.type.js"
+import { RolesService } from "./roles.service.js";
+import { Permissions } from "@app/shared/types/Permissions.type.js";
 
 export interface DBUser {
     id: string;
@@ -51,10 +53,18 @@ export class Service {
         }
     }
 
-    async getUserData<T extends boolean = false>(userId: string, withPassword: T = false as T): Promise<T extends true ? UserWithPassword : User> {
-        const res = await Db.query<T extends true ? UserWithPassword : User>(`SELECT id::integer, username, email, avatar, created_at, tier, verified${withPassword ? `, password` : ``} FROM users WHERE id = $1`, [userId])
+    async getUserData<T extends boolean = false, P extends boolean = false>(userId: string, withPassword: T = false as T, withPermissions: P = false as P): Promise<T extends true ? UserWithPassword : P extends true ? UserWithPermissions : User> {
+        const res = await (await Db.query<T extends true ? UserWithPassword : P extends true ? UserWithPermissions : User>(`SELECT id::integer, username, email, avatar, created_at, tier, verified${withPassword ? `, password` : ``} FROM users WHERE id = $1 LIMIT 1`, [userId])).rows[0]
 
-        return res.rows[0]
+        console.log("RES", res);
+
+        if(withPermissions) {
+            const permissions = await RolesService.getUserPermissions(userId);
+
+            (res as UserWithPermissions).permissions = permissions
+        } 
+
+        return res
     }
 
     async getRoles(userId: string) {

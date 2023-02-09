@@ -1,14 +1,14 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit"
 import { AppDispatch } from "../..";
 import { Map } from "@app/shared/types/Map.type"
-import { User } from "@app/shared/types/User.type";
+import { UserWithPermissions } from "@app/shared/types/User.type";
 
 type Nullable<T> = {
     [P in keyof T]: T[P] | null;
 }
 
 interface AppState {
-    user:  Nullable<User>;
+    user:  Nullable<UserWithPermissions>;
     isAuthed: boolean;
     isCreateRunModalHidden: boolean;
     isCreateEventModalHidden: boolean;
@@ -23,7 +23,13 @@ const initialState: AppState = {
         tier: null,
         created_at: null,
         verified: null,
-        avatar: null
+        avatar: null,
+        permissions: {
+            can_ban: 0,
+            can_create_roles: 0,
+            can_edit_posts: 0,
+            can_delete_happenings: 0
+        }
     },
     isAuthed: false,
     isCreateRunModalHidden: true,
@@ -58,7 +64,7 @@ export const appSlice = createSlice({
         setMaps(state, action: PayloadAction<Array<Map>>) {
             state.maps = action.payload
         },
-        setUserData(state, action: PayloadAction<User>) {
+        setUserData(state, action: PayloadAction<UserWithPermissions>) {
             state.user = action.payload
         },
         setIsAuthed(state, action: PayloadAction<boolean>) {
