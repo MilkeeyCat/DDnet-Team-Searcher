@@ -12,7 +12,7 @@ export interface DBHappening { // Types with DB prefix means fields which are st
     author_id: number;
     place: 0 | 1;
     map_name: string;
-    team_size: number;
+    teamsize: number;
     description: string;
     start_at: string;
     end_at: string;
@@ -33,6 +33,17 @@ class Service {
         try {
             const res = await Db.query<{ id: string }>("INSERT INTO happenings (author_id, place, map_name, teamsize, description, start_at, type) VALUES ($1, $2, $3, $4, $5, $6, 'run') RETURNING id", [data.authorId, data.place, data.mapName, data.teamSize, data.description, `${data.runStartDate} ${data.runStartTime}`])
             await Db.query("INSERT INTO interested_happenings (user_id, happening_id, in_team) VALUES($1, $2, $3)", [data.authorId, parseInt(res.rows[0].id), 1])
+            
+            return true 
+        } catch(e) {
+            console.log(e);
+            return false
+        }
+    }
+
+    async updateRun(data: RunRequest & { id: string }): Promise<boolean> {
+        try {
+            await Db.query<{}>("UPDATE happenings SET place = $1, map_name = $2, teamsize = $3, description = $4, start_at = $5 WHERE id = $6", [data.place, data.mapName, data.teamSize, data.description, `${data.runStartDate} ${data.runStartTime}`, data.id])
             
             return true 
         } catch(e) {
@@ -78,7 +89,6 @@ class Service {
 
                 run.connect_string = `password "${server.password}"; connect ${server.ip}:${server.port}`
             }
-
         }
 
         return runs
@@ -98,7 +108,22 @@ class Service {
         
             return true
         } catch(e) {
-            console.log("CREATING AN EVENT", e);
+            console.log(e);
+            return false
+        }
+    }
+
+    async updateEvent(data: EventRequest & { id: string }) {
+        try {
+            if(data.eventEndDate === undefined || data.eventEndDate === "" || data.eventEndTime === "" || data.eventEndTime === undefined) {
+                await Db.query<{ id: string }>("UPDATE happenings SET place = $1, map_name = $2, teamsize = $3, description = $4, start_at = $5, thumbnail = $6 WHERE id = $7", [data.place, data.mapName, data.teamSize, data.description, `${data.eventStartDate} ${data.eventStartTime}`, data.thumbnail as string ?? null, data.id])
+            } else {
+                await Db.query<{ id: string }>("UPDATE happenings SET place = $1, map_name = $2, teamsize = $3, description = $4, start_at = $5, end_at = $6, thumbnail = $7 WHERE id = $8", [data.place, data.mapName, data.teamSize, data.description, `${data.eventStartDate} ${data.eventStartTime}`, `${data.eventEndDate} ${data.eventEndTime}`, data.thumbnail as string ?? null, data.id])
+            }
+        
+            return true
+        } catch(e) {
+            console.log(e);
             return false
         }
     }

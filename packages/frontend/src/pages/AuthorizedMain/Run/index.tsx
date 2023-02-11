@@ -14,6 +14,7 @@ import { Run as RunType } from "@app/shared/types/Happenings.type"
 import "./styles.scss"
 import { Link } from "react-router-dom"
 import { addHint } from "../../../store/slices/hints"
+import { setEditingHappeningId, setEditingHappeningType, setIsEditHappeningModalHidden } from "../../../store/slices/app"
 
 interface OwnProps {
     run: RunType;
@@ -32,7 +33,7 @@ export const Run: React.FC<OwnProps> = ({onClick, run}) => {
         place,
         start_at,
         status,
-        team_size,
+        teamsize,
         username,
         connect_string
     } = run
@@ -115,6 +116,13 @@ export const Run: React.FC<OwnProps> = ({onClick, run}) => {
         }
     }
 
+    const editRunCb = () => {
+        setIsShowMorePanelHidden(true)
+        dispatch(setIsEditHappeningModalHidden(false))
+        dispatch(setEditingHappeningId(id))
+        dispatch(setEditingHappeningType("run"))
+    }
+
     return (
         <div className={"run"}>
             <img src={`https://ddnet.org/ranks/maps/${map_name.replaceAll(" ", "_")}.png`} className={"run__thumbnail"} alt="map thumbnail"/>
@@ -137,8 +145,8 @@ export const Run: React.FC<OwnProps> = ({onClick, run}) => {
                         <div className={"run__more"}>
                             <button className={"run__more-btn"} onClick={() => setIsShowMorePanelHidden(!isShowMorePanelHidden)}>...</button>
                             <div data-hidden={isShowMorePanelHidden} ref={ref} className={classNames({"run__more-panel": !isShowMorePanelHidden}, {"hidden": isShowMorePanelHidden})}>
-                                {isOwner && <button onClick={() => setIsShowMorePanelHidden(true)}>Edit Run</button>}
                                 {isOwner && status == 0 && <button onClick={startRunCb(id)}>Start Run</button>}
+                                {isOwner && <button onClick={editRunCb}>Edit Run</button>}
                                 {isOwner && status == 1 && <button className={"run__more-panel-red"} onClick={endRunCb(id)}>End Run</button>}
                                 {isOwner && status != 1 && <button className={"run__more-panel-red"} onClick={deleteRunCb(id)}>Delete Run</button>}
                             </div>

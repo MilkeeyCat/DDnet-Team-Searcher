@@ -11,6 +11,16 @@ export type CreateRunResponse = APIResponse<"RUN_CREATION_FAILED" | "RUN_CREATED
     text: string;
 } | string>
 
+export type UpdateRunResponse = APIResponse<"RUN_UPDATING_FAILED" | "RUN_UPDATED_SUCCESSFULLY", {
+    field: keyof RunRequest;
+    text: string;
+} | string>
+
+export type UpdateEventResponse = APIResponse<"EVENT_UPDATING_FAILED" | "EVENT_UPDATED_SUCCESSFULLY" | "ERROR_OCCURED", {
+    field: keyof EventRequest;
+    text: string;
+} | string>
+
 export type GetAllEventsResponse = APIResponse<"SUCCESS", Array<Event>>
 
 export type CreateEventResponse = APIResponse<"EVENT_CREATION_FAILED" | "EVENT_CREATED_SUCCESSFULLY", {

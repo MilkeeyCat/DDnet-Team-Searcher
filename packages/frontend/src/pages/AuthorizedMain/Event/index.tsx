@@ -14,6 +14,7 @@ import { setEvents, setIsInterestedInEvent, updateEventStatus } from "../../../s
 import "./styles.scss"
 import { Link } from "react-router-dom"
 import { addHint } from "../../../store/slices/hints"
+import { setEditingHappeningId, setEditingHappeningType, setIsEditHappeningModalHidden } from "../../../store/slices/app"
 
 interface OwnProps {
     event: EventType;
@@ -32,7 +33,7 @@ export const Event: React.FC<OwnProps> = ({onClick, event}) => {
         place,
         start_at,
         status,
-        team_size,
+        teamsize,
         username,
         connect_string,
         thumbnail
@@ -98,8 +99,10 @@ export const Event: React.FC<OwnProps> = ({onClick, event}) => {
                     }
                 }
 
-            } catch (e: any) {
-                console.log(e);
+            } catch (err: any) {
+                if("data" in err) {
+                    dispatch(addHint({type: "error", text: err.data}))
+                }                
             }
         }
     }
@@ -114,6 +117,13 @@ export const Event: React.FC<OwnProps> = ({onClick, event}) => {
                 console.log(e);
             }
         }
+    }
+
+    const editEventCb = () => {
+        setIsShowMorePanelHidden(true)
+        dispatch(setIsEditHappeningModalHidden(false))
+        dispatch(setEditingHappeningId(id))
+        dispatch(setEditingHappeningType("event"))
     }
 
     const thumbnailUrl = thumbnail ? `http://localhost:8080/public/${thumbnail}` : `https://ddnet.org/ranks/maps/${map_name.replaceAll(" ", "_")}.png`
@@ -145,8 +155,8 @@ export const Event: React.FC<OwnProps> = ({onClick, event}) => {
                         <div className={"event__more"}>
                             <button className={"event__more-btn"} onClick={() => setIsShowMorePanelHidden(!isShowMorePanelHidden)}>...</button>
                             <div data-hidden={isShowMorePanelHidden} ref={ref} className={classNames({"event__more-panel": !isShowMorePanelHidden}, {"hidden": isShowMorePanelHidden})}>
-                                {isOwner && <button onClick={() => setIsShowMorePanelHidden(true)}>Edit Event</button>}
                                 {isOwner && status == 0 && <button onClick={startEventCb(id)}>Start Event</button>}
+                                {isOwner && <button onClick={editEventCb}>Edit Event</button>}
                                 {isOwner && status == 1 && <button className={"event__more-panel-red"} onClick={endEventCb(id)}>End Event</button>}
                                 {isOwner && status != 1 && <button className={"event__more-panel-red"} onClick={deleteEventCb(id)}>Delete Event</button>}
                             </div>

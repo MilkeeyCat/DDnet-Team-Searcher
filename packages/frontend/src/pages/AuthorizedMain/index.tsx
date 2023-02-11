@@ -1,12 +1,13 @@
 import {useEffect, useState} from "react"
 import {useAppDispatch, useAppSelector} from "../../utils/hooks/hooks"
-import {getMaps, setIsCreateEventModalHidden, setIsCreateRunModalHidden} from "../../store/slices/app"
+import {getMaps, setEditingHappeningId, setEditingHappeningType, setIsCreateEventModalHidden, setIsCreateRunModalHidden, setIsEditHappeningModalHidden} from "../../store/slices/app"
 import { setRuns, setEvents } from "../../store/slices/happenings"
 import { Runs } from "./Runs"
 import { Events } from "./Events"
 import { useLazyGetEventsQuery, useLazyGetRunsQuery } from "../../api/happenings-api"
 import { CreateHappeningModal } from "./CreateHappeningModal"
 import { HappeningInfoModal } from "./HappeningInfoModal"
+import { UpdateHappeningModal } from "./UpdateHappeningModal"
 
 export const AuthorizedMain = () => {
     const dispatch = useAppDispatch()
@@ -16,6 +17,7 @@ export const AuthorizedMain = () => {
 
     const isCreateRunModalHidden = useAppSelector(state => state.app.isCreateRunModalHidden)
     const isCreateEventModalHidden = useAppSelector(state => state.app.isCreateEventModalHidden)
+    const editingHappening = useAppSelector(state => state.app.editingHappening)
     const [isRunInfoModalOpened, setIsRunInfoModalOpened] = useState(false)
     const [isEventInfoModalOpened, setIsEventInfoModalOpened] = useState(false)
     const [runInfoModalRunId, setRunInfoModalRunId] = useState<null | number>(null)
@@ -53,13 +55,19 @@ export const AuthorizedMain = () => {
             }}/>
             <CreateHappeningModal type="event" isVisible={!isCreateEventModalHidden} onClose={()=>{
                 dispatch(setIsCreateEventModalHidden(true))
-            }}/>            
+            }}/>
 
             <Events onClick={eventOnClick}/>
             <Runs onClick={runOnClick}/>
 
             {isEventInfoModalOpened && <HappeningInfoModal type="event" onClose={()=>setIsEventInfoModalOpened(false)} happeningId={eventInfoModalEventId!}/>}
             {isRunInfoModalOpened && <HappeningInfoModal type="run" onClose={()=>setIsRunInfoModalOpened(false)} happeningId={runInfoModalRunId!}/>}
+
+            {!editingHappening.isEditHappeningModalHidden && <UpdateHappeningModal type={editingHappening.editingHappeningType as "run" | "event"} isVisible={!editingHappening.isEditHappeningModalHidden} onClose={()=>{
+                dispatch(setIsEditHappeningModalHidden(true))
+                dispatch(setEditingHappeningId(null))
+                dispatch(setEditingHappeningType(null))
+            }} happeningId={editingHappening.editingHappeningId!} /> }
         </>
     )
 }

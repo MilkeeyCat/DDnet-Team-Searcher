@@ -84,7 +84,7 @@ export const CreateHappeningModal = ({type, isVisible, onClose}: OwnProps) => {
             let res
 
             if(type == "run") { // I will send a run
-                res = await createRun(values).unwrap()
+                res = await createRun(values as CreateRunForm).unwrap()
 
                 dispatch(setIsCreateRunModalHidden(true))
             } else { // I will send an event
@@ -93,7 +93,7 @@ export const CreateHappeningModal = ({type, isVisible, onClose}: OwnProps) => {
                 Object.keys(values).map((key) => {
                     formData.append(key, values[key as keyof Happening] || "")
                 })
-    
+
                 res = await createEvent(formData).unwrap()
     
                 dispatch(setIsCreateEventModalHidden(true))
@@ -123,7 +123,6 @@ export const CreateHappeningModal = ({type, isVisible, onClose}: OwnProps) => {
 
     return (
         <Modal className={"create-run"} visible={isVisible} onClose={onClose} width={"600px"}>
-
             <p className="text-3xl m-0 pt-6 px-5">Create your own {type}</p>
             <Formik initialValues={initialValues} validate={validation} onSubmit={onSubmit}>
                 <Form>

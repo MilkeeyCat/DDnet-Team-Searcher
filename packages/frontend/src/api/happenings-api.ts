@@ -1,5 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/dist/query/react'
-import { AddOrRemoveFromTeamResponse, CreateEventResponse, CreateRunResponse, DeleteHappeningResponse, EndHappeningResponse, GetAllEventsResponse, GetAllRunsResponse, InterestedPlayersResponse, SetInterestedResponse, StartHappeningResponse } from '@app/shared/types/api/happenings.type'
+import { AddOrRemoveFromTeamResponse, CreateEventResponse, CreateRunResponse, DeleteHappeningResponse, EndHappeningResponse, GetAllEventsResponse, GetAllRunsResponse, InterestedPlayersResponse, SetInterestedResponse, StartHappeningResponse, UpdateRunResponse } from '@app/shared/types/api/happenings.type'
+import { CreateRunForm } from '../types/CreateRunForm.type'
+import { CreateEventForm } from '../types/CreateEventForm.type'
 
 export const happeningsApi = createApi({
     reducerPath: 'happeningsApi',
@@ -20,20 +22,17 @@ export const happeningsApi = createApi({
                 return res.data
             },
         }),
-        createRun: build.mutation<CreateRunResponse, any>({
+        createRun: build.mutation<CreateRunResponse, CreateRunForm>({
             query: (body) => ({
                 url: `create/run`,
                 method: 'POST',
                 body,
             }),
-            // transformResponse: (res) => {
-            //     return res.data
-            // }
             transformErrorResponse: (err) => {
                 return err.data
             }
         }),
-        createEvent: build.mutation<CreateEventResponse, any>({
+        createEvent: build.mutation<CreateEventResponse, FormData>({
             query: (body) => ({
                 url: `create/event`,
                 method: 'POST',
@@ -41,6 +40,26 @@ export const happeningsApi = createApi({
             }),
             transformErrorResponse: (err) => {
                 return err.data
+            }
+        }),
+        updateRun: build.mutation<UpdateRunResponse, {id: number, happening: CreateRunForm}>({
+            query: ({id, happening}) => ({
+                url: `${id}/update/run`,
+                method: "PUT",
+                body: happening
+            }),
+            transformErrorResponse: (res) => {
+                return res.data
+            }
+        }),
+        updateEvent: build.mutation<UpdateRunResponse, {id: number, happening: FormData}>({
+            query: ({id, happening}) => ({
+                url: `${id}/update/event`,
+                method: "PUT",
+                body: happening
+            }),
+            transformErrorResponse: (res) => {
+                return res.data
             }
         }),
         endHappening: build.mutation<EndHappeningResponse, number>({
@@ -59,7 +78,8 @@ export const happeningsApi = createApi({
             query: (id) => ({
                 url: `${id}/delete`,
                 method: "DELETE"
-            })
+            }),
+            transformErrorResponse: (res) => res.data
         }),
         setIsInterested: build.mutation<SetInterestedResponse, number>({
             query: (id) => ({
@@ -89,6 +109,8 @@ export const {
     useLazyGetEventsQuery,
     useCreateRunMutation,
     useCreateEventMutation,
+    useUpdateRunMutation,
+    useUpdateEventMutation,
     useStartHappeningMutation,
     useEndHappeningMutation,
     useDeleteHappeningMutation,
