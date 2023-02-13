@@ -1,7 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/dist/query/react'
 import { AddOrRemoveFromTeamResponse, CreateEventResponse, CreateRunResponse, DeleteHappeningResponse, EndHappeningResponse, GetAllEventsResponse, GetAllRunsResponse, InterestedPlayersResponse, SetInterestedResponse, StartHappeningResponse, UpdateRunResponse } from '@app/shared/types/api/happenings.type'
 import { CreateRunForm } from '../types/CreateRunForm.type'
-import { CreateEventForm } from '../types/CreateEventForm.type'
 
 export const happeningsApi = createApi({
     reducerPath: 'happeningsApi',

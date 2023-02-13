@@ -251,7 +251,7 @@ class Service {
     }
 
     async getInterestedPlayers(happeningId: string): Promise<QueryResult<InterestedPlayer>> {
-        return await Db.query<InterestedPlayer>("SELECT interested_happenings.in_team, users.username, users.id, users.avatar FROM interested_happenings INNER JOIN users ON users.id = interested_happenings.user_id WHERE interested_happenings.happening_id = $1", [happeningId])
+        return await Db.query<InterestedPlayer>("SELECT interested_happenings.in_team, users.username, users.id::integer, users.avatar FROM interested_happenings INNER JOIN users ON users.id = interested_happenings.user_id WHERE interested_happenings.happening_id = $1", [happeningId])
     }
 
     async isUserInTeam(happeningId: string, userId: string): Promise<QueryResult<{in_team: 0 | 1}>> {

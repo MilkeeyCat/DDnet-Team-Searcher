@@ -88,3 +88,22 @@ CREATE TABLE interested_happenings (
         REFERENCES happenings(id)
         ON DELETE CASCADE
 );
+
+CREATE TABLE reviews(
+    id BIGSERIAL PRIMARY KEY,
+    author_id INT NOT NULL,
+    reviewed_user_id INT NOT NULL,
+    happening_id INT NOT NULL,
+    text VARCHAR(300) DEFAULT NULL,
+    rate SMALLINT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(author_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE,
+    FOREIGN KEY(reviewed_user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE,
+    FOREIGN KEY(happening_id)
+        REFERENCES happenings(id)
+        ON DELETE CASCADE
+);

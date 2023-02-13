@@ -5,6 +5,7 @@ import {UsersRouter} from "./routes/users.route.js"
 import { GameServerService } from "./services/gameServer.service.js"
 import { ServersService } from "./services/servers.service.js"
 import { HappeningsRouter } from "./routes/happenings.route.js"
+import { ReviewsRouter } from "./routes/reviews.route.js"
 import cron from "node-cron"
 
 
@@ -35,6 +36,7 @@ app.use((req, res, next) => {
 
 app.use("/api", UsersRouter)
 app.use("/api", HappeningsRouter)
+app.use("/api", ReviewsRouter)
 
 app.get("/", (_, res: Response) => {
     res.json({status: "Hood"})

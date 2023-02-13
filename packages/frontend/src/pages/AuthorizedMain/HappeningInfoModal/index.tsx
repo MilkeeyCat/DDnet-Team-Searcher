@@ -6,11 +6,13 @@ import {Avatar} from "../../../components/Avatar"
 import {useEffect, useState} from "react"
 import classNames from "classnames"
 import { useLazyGetInterestedPlayersQuery, useUpdateIsPlayerInTeamMutation } from "../../../api/happenings-api"
-import { InterestedPlayer } from "@app/shared/types/InterestedPlayer.type"
+import { InterestedPlayer as InterestedPlayerT } from "@app/shared/types/InterestedPlayer.type"
 import { Event, Run } from "@app/shared/types/Happenings.type"
-import { Link } from "react-router-dom"
+import { InterestedPlayer } from "./InterestedPlayer"
+import { useGetHappeningReviewsQuery } from "../../../api/reviews-api"
+import { Review } from "./Review"
 
-interface OwnProps {
+type OwnProps = {
     happeningId: number;
     onClose: () => void;
     type: "run" | "event";
@@ -20,8 +22,8 @@ export const HappeningInfoModal: React.FC<OwnProps> = ({type, happeningId, onClo
     const happening = useAppSelector(state => state.happeningsReducer[type == "event" ? "events" : "runs"]).find(happening => happening.id === happeningId)! as typeof type extends "run" ? Run : Event
     const [ getInterestedPlayers, interestedPlayersData ] = useLazyGetInterestedPlayersQuery()
     const [ updateIsPlayerInTeam ] = useUpdateIsPlayerInTeamMutation()
-
-    const [interestedPlayers, setInterestedPlayers] = useState<null | InterestedPlayer[]>(null)
+    const {data: reviews} = useGetHappeningReviewsQuery(happeningId)
+    const [interestedPlayers, setInterestedPlayers] = useState<null | Array<InterestedPlayerT>>(null)
     const authedUserId = useAppSelector(state => state.app.user.id)!
 
     const authedUser = interestedPlayers?.find(arr => arr.id == authedUserId)
@@ -84,6 +86,9 @@ export const HappeningInfoModal: React.FC<OwnProps> = ({type, happeningId, onClo
                 <li className={classNames("ml-4 relative pb-2.5 cursor-pointer after:transition-all after:absolute after:w-full after:h-[2px] after:left-0 after:bottom-[-1px] after:rounded-full", {"after:bg-[#f6a740]": slideNum == 1})}
                     onClick={() => setSlideNum(1)}>{happening.interested} interested
                 </li>
+                {type == "run" && happening.status == 2 && <li className={classNames("ml-4 relative pb-2.5 cursor-pointer after:transition-all after:absolute after:w-full after:h-[2px] after:left-0 after:bottom-[-1px] after:rounded-full", {"after:bg-[#f6a740]": slideNum == 2})}
+                    onClick={() => setSlideNum(2)}>Reviews
+                </li>}
             </ul>
             <div className="flex max-w-[calc(100%-40px)] my-5 mx-auto overflow-hidden">
                 <div className="transition-all duration-500 max-w-full w-full shrink-0 relative" style={{right: `${slideNum * 100}%`}}>
@@ -97,20 +102,15 @@ export const HappeningInfoModal: React.FC<OwnProps> = ({type, happeningId, onClo
                 </div>
                 <div className="transition-all duration-500 max-w-full w-full shrink-0 relative" style={{right: `${slideNum * 100}%`}}>
                     <ul>
-                        {interestedPlayers?.map(user => (
-                            <li className={classNames("cursor-pointer flex p-2.5 rounded-md mt-1 transition-colors [&:not(.active)]:hover:bg-[#3F362B]", {"active bg-[#6e5e47]": user.in_team})}>
-                                {happening.author_id == authedUserId &&
-                                <input className="mr-5" type="checkbox" name="interestedPlayers"
-                                       checked={user.in_team === 1}
-                                       onChange={inputCb(happening.author_id, user.id)}
-                                       readOnly={user.id == happening.author_id}/>}
-                                <Link to={`/profile/${user.id}`}>
-                                    <Avatar src={user.avatar} username={user.username}/>
-                                </Link>
-                                <span className="ml-2.5">{user.username}</span>
-                            </li>
+                        {interestedPlayers?.map((user, id) => (
+                            <InterestedPlayer key={id} reviews={reviews?.data || []} authedUserId={authedUserId} happening={happening} onChange={inputCb} user={user} />
                         ))}
                     </ul>
+                </div>
+                <div className="transition-all pr-3 duration-500 max-w-full w-full max-h-[450px] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-[#3F362B] [&::-webkit-scrollbar-thumb]:bg-[#89745A] [&::-webkit-scrollbar-thumb]:rounded-[10px] overflow-y-scroll shrink-0 relative" style={{right: `${slideNum * 100}%`}}>
+                    {reviews?.data && reviews.data.map((review, id) => (
+                        <Review key={id} review={review} />
+                    ))}
                 </div>
             </div>
             <div className={"flex justify-end rounded-b-[10px] py-4 px-5 bg-[#1A1714] text-primary-1"}>
