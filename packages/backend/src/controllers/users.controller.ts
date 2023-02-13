@@ -8,8 +8,9 @@ import { LoginRequest } from "@app/shared/types/LoginRequest.type"
 // import { RunsService } from "../services/runs.service.js"
 import { RolesService } from "../services/roles.service.js"
 import { ResponseHandler } from "@app/shared/types/ReponseHandler.type"
-import { LoginResponse, RegistrationResponse, UserDataResponse, UserProfileResponse, UserRolesResponse, UserRunsResponse } from "@app/shared/types/api/users.types"
+import { LoginResponse, RegistrationResponse, UserDataResponse, UserFollowResponse, UserProfileResponse, UserRolesResponse, UserRunsResponse } from "@app/shared/types/api/users.types"
 import { HappeningsService } from "../services/happenings.service.js"
+import { FollowersService } from "../services/followers.service.js"
  
 class Controller {
     async register(req: Request<any, any, RegistrationRequest>, res: ResponseHandler<RegistrationResponse>): Promise<void> {
@@ -98,6 +99,11 @@ class Controller {
                     res.json({
                         status: "LOGIN_SUCCESSFUL"
                     })
+            } else {
+                res.status(400).json({
+                    status: "LOGIN_FAILED",
+                    data: "Username or password is wrong!"
+                })
             }
         } else {
             res.status(400).json({
@@ -123,10 +129,20 @@ class Controller {
 
         if(isUserExists) {
             const user = await UsersService.getUserData(userId, false, false)
+            const followStats = await FollowersService.getFollowStats(parseInt(userId))
             
+            if(parseInt(res.locals.user.id) !== parseInt(userId)) {
+                const following = await FollowersService.isUserFolling({follower: parseInt(res.locals.user.id), following: parseInt(userId)})
+
+                res.json({
+                    status: "SUCCESS",
+                    data: {...user, following, followStats},
+                })
+                return
+            }
             res.json({
                 status: "SUCCESS",
-                data: user
+                data: {...user, followStats}
             })
         } else {
             res.status(404).json({
@@ -191,6 +207,33 @@ class Controller {
             res.json({
                 status: "SUCCESS",
                 data: runs.rows
+            })
+        }
+    }
+
+    async follow(req: Request<{userId: string}>, res: ResponseHandler<UserFollowResponse, AuthMiddlewareResponse>) {
+        const { userId } = req.params
+
+        const isUserExists = await UsersService.isUserExistsById(userId)
+
+        if(isUserExists) {
+            const result = await FollowersService.follow({follower: parseInt(res.locals.user.id), following: parseInt(userId)})
+
+            if(result) {
+                res.json({
+                    status: "SUCCESS",
+                    data: "Success =]"
+                })
+            } else {
+                res.status(500).json({
+                    status: "ERROR_OCURRED",
+                    data: "Some error has occured"
+                })
+            }
+        } else {
+            res.status(400).json({
+                status: "USER_DOESNT_EXISTS",
+                data: "User doesnt exists"
             })
         }
     }

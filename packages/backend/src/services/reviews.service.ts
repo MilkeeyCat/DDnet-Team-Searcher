@@ -1,6 +1,7 @@
 import { Db } from "./db.service.js";
 import { UsersService } from "./users.service.js";
 import { Review } from "@app/shared/types/Review.type.js"
+import { QueryResult } from "pg";
 
 export type DBReview = {
     id: number;
@@ -55,9 +56,8 @@ class Service {
         return reviews
     }
 
-    async reviewAlreadyExists({authorId, reviewedUserId, happeningId}: {authorId: string, reviewedUserId: number, happeningId: number}) {
-        return await Db.query("SELECT id FROM reviews WHERE author_id = $1 AND reviewed_user_id = $2 AND happening_id = $3", [authorId, reviewedUserId, happeningId])
-
+    async reviewAlreadyExists({authorId, reviewedUserId, happeningId}: {authorId: string, reviewedUserId: number, happeningId: number}): Promise<QueryResult<{id?: number}>> {
+        return await Db.query<{id?: number}>("SELECT id::integer FROM reviews WHERE author_id = $1 AND reviewed_user_id = $2 AND happening_id = $3", [authorId, reviewedUserId, happeningId])
     }
 }
 

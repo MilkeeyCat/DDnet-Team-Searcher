@@ -89,7 +89,7 @@ CREATE TABLE interested_happenings (
         ON DELETE CASCADE
 );
 
-CREATE TABLE reviews(
+CREATE TABLE reviews (
     id BIGSERIAL PRIMARY KEY,
     author_id INT NOT NULL,
     reviewed_user_id INT NOT NULL,
@@ -105,5 +105,18 @@ CREATE TABLE reviews(
         ON DELETE CASCADE,
     FOREIGN KEY(happening_id)
         REFERENCES happenings(id)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE followers (
+    id BIGSERIAL PRIMARY KEY,
+    follower INT NOT NULL,
+    following INT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(follower)
+        REFERENCES users(id)
+        ON DELETE CASCADE,
+    FOREIGN KEY(following)
+        REFERENCES users(id)
         ON DELETE CASCADE
 );

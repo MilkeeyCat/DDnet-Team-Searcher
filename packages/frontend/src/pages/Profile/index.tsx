@@ -5,21 +5,35 @@ import { ClockIcon } from "../../components/ui/Icons/Clock"
 import { Button } from "../../components/ui/Button"
 import { useAppSelector } from "../../utils/hooks/hooks"
 import { Avatar } from "../../components/Avatar"
-import { useGetUserProfileQuery, useGetUserRolesQuery } from "../../api/users-api"
+import { useFollowUserMutation, useGetUserProfileQuery, useGetUserRolesQuery } from "../../api/users-api"
 import { Graph } from "./Graph"
+import classNames from "classnames"
 
 
 export const Profile = () => {
     const {userId}: {userId?: string} = useParams()
     const authedUserId = useAppSelector(state => state.app.user.id)
-    const { data: user, isSuccess, isError } = useGetUserProfileQuery(userId || authedUserId?.toString() || "")
+    const { data: user, refetch, isSuccess, isError } = useGetUserProfileQuery(userId || authedUserId?.toString() || "")
     const { data: roles } = useGetUserRolesQuery(userId || authedUserId?.toString() || "")
+    const [followUser] = useFollowUserMutation()
+    const sameUser = parseInt(userId || "") === authedUserId || !userId
 
     const startDateWithWeekday = new Date(user?.created_at || "").toLocaleDateString([], {
         day: "numeric",
         month: "long",
         year: "numeric"
     })
+
+    const follow = async () => {
+        try {
+            if(user) {
+                const res = await followUser(user.id).unwrap()
+                refetch()
+            }
+        } catch(e) {
+
+        }
+    }
 
     return (
         <>
@@ -38,11 +52,11 @@ export const Profile = () => {
                                     </div>                    
                                 ))}
                             </div>
-                        <p className="mt-1"><PeopleIcon color="#fff" className="inline-block"/> <span>100 followers · 1 following</span></p>               
+                        <p className="mt-1"><PeopleIcon color="#fff" className="inline-block"/> <span>{user.followStats?.followers} followers · {user.followStats?.following} following</span></p>               
                         <p className="mt-1"><ClockIcon color="#fff" className="inline-block"/> <span>Joined {startDateWithWeekday}</span></p>               
                         <p className="mt-1">Clan <span className="text-sm opacity-30 ml-[20px]">namelessclan</span></p>  
-                        <div className="flex mt-5">
-                            <Button className="max-w-[120px] w-full !block text-center" styleType="filled">Follow</Button>
+                        <div className={classNames("flex mt-5", {"hidden": sameUser})}>
+                            <Button className="max-w-[120px] w-full !block text-center" onClick={follow} styleType={user?.following ? "bordered" : "filled"}>{user?.following ? "Unfollow" : "Follow"}</Button>
                             <Button className="max-w-[120px] w-full !block text-center ml-8 !border-[red]" styleType="bordered">Report</Button>
                         </div>
                     </div>

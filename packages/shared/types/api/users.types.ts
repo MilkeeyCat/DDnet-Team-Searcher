@@ -19,6 +19,8 @@ export type UserRolesResponse = APIResponse<"USER_NOT_FOUND" | "SUCCESS", Array<
 
 export type UserDataResponse = APIResponse<"SUCCESS", UserWithPermissions>
 
-export type UserProfileResponse = APIResponse<"USER_NOT_FOUND" | "SUCCESS", User>
+export type UserFollowResponse = APIResponse<"SUCCESS" | "ERROR_OCURRED" | "USER_DOESNT_EXISTS", string>
+
+export type UserProfileResponse = APIResponse<"USER_NOT_FOUND" | "SUCCESS", User & {following?: boolean, followStats?: {followers: number, following: number}}>
 
 export type UserRunsResponse = APIResponse<"USER_NOT_FOUND" | "SUCCESS", Array<Run>>
