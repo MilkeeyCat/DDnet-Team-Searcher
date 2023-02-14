@@ -12,6 +12,7 @@ Router.get("/fetch-data", authMiddleware, UsersController.fetchUserData)
 
 Router.get("/user/:userId", authMiddleware, UsersController.getUserProfile)
 Router.put("/user/:userId/follow", authMiddleware, UsersController.follow)
+Router.post("/user/:userId/report", authMiddleware, UsersController.reportUser)
 Router.get("/user/:userId?/roles", authMiddleware, UsersController.getUserRoles)
 Router.get("/user/:userId?/runs", authMiddleware, UsersController.getUserRuns)
 export const UsersRouter = Router

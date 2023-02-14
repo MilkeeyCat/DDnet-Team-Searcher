@@ -10,6 +10,7 @@ import {
     UserRolesResponse,
     UserRunsResponse,
     UserFollowResponse,
+    UserReportResponse,
 } from '@app/shared/types/api/users.types'
 
 export const usersApi = createApi({
@@ -73,11 +74,9 @@ export const usersApi = createApi({
             },
         }),
         getUserRoles: build.query<UserRolesResponse['data'], string>({
-            query: (userId) => {
-                return {
+            query: (userId) => ({
                     url: `user/${userId}/roles`,
-                }
-            },
+            }),
             transformResponse: (res: UserRolesResponse) => {
                 return res.data
             },
@@ -88,6 +87,14 @@ export const usersApi = createApi({
                 method: 'PUT',
             }),
         }),
+        reportUser: build.mutation<UserReportResponse, {userId: number, text: string}>({
+            query: (body) => ({
+                url: `user/${body.userId}/report`,
+                method: "POST",
+                body: {text: body.text}
+            }),
+            transformErrorResponse: (res) => res.data
+        })
     }),
 })
 
@@ -98,5 +105,6 @@ export const {
     useGetUserProfileQuery,
     useGetUserRunsQuery,
     useGetUserRolesQuery,
-    useFollowUserMutation
+    useFollowUserMutation,
+    useReportUserMutation
 } = usersApi

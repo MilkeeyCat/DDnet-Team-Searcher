@@ -120,3 +120,16 @@ CREATE TABLE followers (
         REFERENCES users(id)
         ON DELETE CASCADE
 );
+
+CREATE TABLE reports(
+    id BIGSERIAL PRIMARY KEY,
+    author_id INT NOT NULL,
+    reported_user_id INT NOT NULL,
+    text VARCHAR(255),
+    FOREIGN KEY(author_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE,
+    FOREIGN KEY(reported_user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE
+);

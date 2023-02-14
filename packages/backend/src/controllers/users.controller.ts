@@ -8,9 +8,10 @@ import { LoginRequest } from "@app/shared/types/LoginRequest.type"
 // import { RunsService } from "../services/runs.service.js"
 import { RolesService } from "../services/roles.service.js"
 import { ResponseHandler } from "@app/shared/types/ReponseHandler.type"
-import { LoginResponse, RegistrationResponse, UserDataResponse, UserFollowResponse, UserProfileResponse, UserRolesResponse, UserRunsResponse } from "@app/shared/types/api/users.types"
+import { LoginResponse, RegistrationResponse, UserDataResponse, UserFollowResponse, UserProfileResponse, UserReportResponse, UserRolesResponse, UserRunsResponse } from "@app/shared/types/api/users.types"
 import { HappeningsService } from "../services/happenings.service.js"
 import { FollowersService } from "../services/followers.service.js"
+import { ReportsService } from "../services/reports.service.js"
  
 class Controller {
     async register(req: Request<any, any, RegistrationRequest>, res: ResponseHandler<RegistrationResponse>): Promise<void> {
@@ -133,10 +134,11 @@ class Controller {
             
             if(parseInt(res.locals.user.id) !== parseInt(userId)) {
                 const following = await FollowersService.isUserFolling({follower: parseInt(res.locals.user.id), following: parseInt(userId)})
+                const reported = await ReportsService.isReportAlreadyExists({authorId: parseInt(res.locals.user.id), reportedUserId: parseInt(userId)})
 
                 res.json({
                     status: "SUCCESS",
-                    data: {...user, following, followStats},
+                    data: {...user, following, followStats, reported},
                 })
                 return
             }
@@ -234,6 +236,39 @@ class Controller {
             res.status(400).json({
                 status: "USER_DOESNT_EXISTS",
                 data: "User doesnt exists"
+            })
+        }
+    }
+
+    async reportUser(req: Request<{userId: string}, {}, {text: string}>, res: ResponseHandler<UserReportResponse, AuthMiddlewareResponse>) {
+        const {userId} = req.params
+
+        const isUserAlreadyReported = await ReportsService.isReportAlreadyExists({authorId: parseInt(res.locals.user.id), reportedUserId: parseInt(userId)})
+
+        if(isUserAlreadyReported) {
+            res.status(400).json({
+                status: "USER_ALREADY_REPORTED",
+                data: "You cannot report this user because you already did"
+            })
+            return
+        } else {
+            const result = await ReportsService.createReport({
+                authorId: parseInt(res.locals.user.id),
+                reportedUserId: parseInt(userId),
+                text: req.body.text
+            })
+
+            if(result) {
+                res.json({
+                    status: "SUCCESS",
+                    data: "User reported successfully!"
+                })
+                return
+            }
+
+            res.status(500).json({
+                status: "ERROR_OCCURED",
+                data: "Some error has occured"
             })
         }
     }
