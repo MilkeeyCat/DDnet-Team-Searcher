@@ -16,22 +16,6 @@ class Controller {
             reviewedUserId: reviewedUserId,
             happeningId})
 
-        const errors: {field: keyof CreateReviewRequest, data: string}[] = []
-
-        Object.keys({happeningId, rate, reviewedUserId}).map(key => {
-            if(!req.body[key as keyof CreateReviewRequest]) {
-                errors.push({field: key as keyof CreateReviewRequest, data: "Field is required"})
-            }
-        })
-
-        if(errors.length) {
-            res.status(400).json({
-                status: "BAD_DATA",
-                data: errors[0]
-            })
-        }
-
-
         if(review.rowCount) {
             res.json({
                 status: "REVIEW_ALREADY_EXISTS",
@@ -40,7 +24,7 @@ class Controller {
             return
         }
 
-        const author = await HappeningsService.isUserInTeam(happeningId.toString(), res.locals.user.id)
+        const author = await HappeningsService.isUserInTeam(happeningId, res.locals.user.id)
 
         if(!author.rows[0]?.in_team) {
             res.json({
@@ -50,10 +34,10 @@ class Controller {
             return
         }
 
-        const isReviewedUserExists = await UsersService.isUserExistsById(reviewedUserId.toString())
+        const isReviewedUserExists = await UsersService.isUserExistsById(reviewedUserId)
 
         if(isReviewedUserExists) {
-            const reviewedUser = await HappeningsService.isUserInTeam(happeningId.toString(), reviewedUserId.toString())
+            const reviewedUser = await HappeningsService.isUserInTeam(happeningId, reviewedUserId)
     
             if(!reviewedUser.rowCount) {
                 res.json({
@@ -74,7 +58,7 @@ class Controller {
             happeningId,
             rate,
             text,
-            authorId: parseInt(res.locals.user.id),
+            authorId: res.locals.user.id,
         })
 
         if(result) {
@@ -82,15 +66,16 @@ class Controller {
                 status: "REVIEW_CREATED_SUCCESFULLY",
                 data: "Review was created successfully =]"
             })
-        } else {
-            res.status(500).json({
-                status: "ERROR_OCCURED",
-                data: "Couldnt create a review"
-            })
+            return
         }
+        
+        res.status(500).json({
+            status: "ERROR_OCCURED",
+            data: "Couldnt create a review"
+        })
     }
 
-    async getHapenningReviews(req: Request<{happeningId: string}>, res: ResponseHandler<GetHappeningReviewsResponse, AuthMiddlewareResponse>) {
+    async getHapenningReviews(req: Request<{happeningId: number}>, res: ResponseHandler<GetHappeningReviewsResponse, AuthMiddlewareResponse>) {
         const happening = HappeningsService.findHappeningById(req.params.happeningId)
 
         if((await happening).rowCount) {

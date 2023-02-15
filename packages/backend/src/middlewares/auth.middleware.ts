@@ -13,7 +13,7 @@ export const authMiddleware = (req: Request, res: AuthMiddlewareResponse, next: 
 
     try {
         const decoded = jwt.verify(token, config.TOKEN_KEY as string)
-        res.locals.user = decoded as {id: string, email: string}
+        res.locals.user = decoded as {id: number, email: string}
     } catch (err) {
         return res.status(401).send("Invalid Token")
     }

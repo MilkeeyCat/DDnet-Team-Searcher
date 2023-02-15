@@ -31,7 +31,7 @@ class Service {
         }
     }
 
-    async getHappeningReviews(happeningId: string): Promise<Array<Review>> {
+    async getHappeningReviews(happeningId: number): Promise<Array<Review>> {
         const reviews: Array<Review> = []
 
         const data = await Db.query<{
@@ -42,8 +42,8 @@ class Service {
         }>(`SELECT text, rate, author_id, reviewed_user_id FROM reviews WHERE happening_id = $1`, [happeningId])
 
         for await (const row of data.rows) {
-            const author = await UsersService.getUserData(row.author_id.toString(), false, false)
-            const reviewedUser = await UsersService.getUserData(row.reviewed_user_id.toString(), false, false)
+            const author = await UsersService.getUserData(row.author_id, false, false)
+            const reviewedUser = await UsersService.getUserData(row.reviewed_user_id, false, false)
 
             reviews.push({
                 text: row.text,
@@ -56,7 +56,7 @@ class Service {
         return reviews
     }
 
-    async reviewAlreadyExists({authorId, reviewedUserId, happeningId}: {authorId: string, reviewedUserId: number, happeningId: number}): Promise<QueryResult<{id?: number}>> {
+    async reviewAlreadyExists({authorId, reviewedUserId, happeningId}: {authorId: number, reviewedUserId: number, happeningId: number}): Promise<QueryResult<{id?: number}>> {
         return await Db.query<{id?: number}>("SELECT id::integer FROM reviews WHERE author_id = $1 AND reviewed_user_id = $2 AND happening_id = $3", [authorId, reviewedUserId, happeningId])
     }
 }

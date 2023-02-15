@@ -56,7 +56,7 @@ export const usersApi = createApi({
                 }
             },
         }),
-        getUserProfile: build.query<UserProfileResponse['data'], string>({
+        getUserProfile: build.query<UserProfileResponse['data'], number>({
             query: (userId) => {
                 return {
                     url: `user/${userId}`,
@@ -66,14 +66,14 @@ export const usersApi = createApi({
                 return res.data
             },
         }),
-        getUserRuns: build.query<UserRunsResponse, string>({
+        getUserRuns: build.query<UserRunsResponse, number>({
             query: (userId) => {
                 return {
                     url: `user/${userId}/runs`,
                 }
             },
         }),
-        getUserRoles: build.query<UserRolesResponse['data'], string>({
+        getUserRoles: build.query<UserRolesResponse['data'], number>({
             query: (userId) => ({
                     url: `user/${userId}/roles`,
             }),

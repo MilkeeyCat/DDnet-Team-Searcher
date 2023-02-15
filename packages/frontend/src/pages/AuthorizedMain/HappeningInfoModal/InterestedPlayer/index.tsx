@@ -75,7 +75,7 @@ export const InterestedPlayer = ({user, happening, authedUserId, onChange, revie
                         <div className="flex items-center">
                             {[1,2,3,4,5].map((num, id) => (
                                 <div className="flex [&:not(:first-child)]:ml-5 items-center" key={id}>
-                                    <Field id={id} className="appearance-none w-5 h-5 rounded-full border-2 border-primary-1 after:relative after:block after:w-2.5 after:h-2.5 after:rounded-full after:top-[50%] after:translate-y-[-50%] after:left-[50%] after:translate-x-[-50%] checked:after:bg-primary-1" type="radio" name="rate" value={num.toString()} />
+                                    <Field id={id.toString()} className="appearance-none w-5 h-5 rounded-full border-2 border-primary-1 after:relative after:block after:w-2.5 after:h-2.5 after:rounded-full after:top-[50%] after:translate-y-[-50%] after:left-[50%] after:translate-x-[-50%] checked:after:bg-primary-1" type="radio" name="rate" value={num.toString()} />
                                     <label htmlFor={id.toString()} className="ml-1.5 cursor-pointer">{num}</label>
                                 </div>
                             ))}

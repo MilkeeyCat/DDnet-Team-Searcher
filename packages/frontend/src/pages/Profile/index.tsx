@@ -15,12 +15,11 @@ import { useState } from "react"
 import { addHint } from "../../store/slices/hints"
 import { UserReportResponse } from "@app/shared/types/api/users.types"
 
-
 export const Profile = () => {
     const {userId}: {userId?: string} = useParams()
     const authedUserId = useAppSelector(state => state.app.user.id)
-    const { data: user, refetch, isSuccess, isError } = useGetUserProfileQuery(userId || authedUserId?.toString() || "")
-    const { data: roles } = useGetUserRolesQuery(userId || authedUserId?.toString() || "")
+    const { data: user, refetch, isSuccess, isError } = useGetUserProfileQuery(parseInt(userId || "") || authedUserId || 0)
+    const { data: roles } = useGetUserRolesQuery(parseInt(userId || "") || authedUserId || 0)
     const [followUser] = useFollowUserMutation()
     const [reportUser] = useReportUserMutation()
     const sameUser = parseInt(userId || "") === authedUserId || !userId

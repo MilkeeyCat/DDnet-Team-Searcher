@@ -41,7 +41,7 @@ class Service {
         }
     }
 
-    async updateRun(data: RunRequest & { id: string }): Promise<boolean> {
+    async updateRun(data: RunRequest & { id: number }): Promise<boolean> {
         try {
             await Db.query<{}>("UPDATE happenings SET place = $1, map_name = $2, teamsize = $3, description = $4, start_at = $5 WHERE id = $6", [data.place, data.mapName, data.teamSize, data.description, `${data.runStartDate} ${data.runStartTime}`, data.id])
             
@@ -52,7 +52,7 @@ class Service {
         }
     }
 
-    async getAllRuns(userId: string): Promise<QueryResult<Run>> {
+    async getAllRuns(userId: number): Promise<QueryResult<Run>> {
         const runs = await Db.query<Run>(
             `SELECT happenings.id::integer, happenings.map_name, happenings.author_id, happenings.place, happenings.teamsize,
             happenings.description, happenings.status, happenings.start_at, users.username, users.avatar,
@@ -74,7 +74,7 @@ class Service {
         return runs
     }
 
-    async getUserRuns(userId: string): Promise<QueryResult<Run>> {
+    async getUserRuns(userId: number): Promise<QueryResult<Run>> {
         const runs = await Db.query<Run>(
             `SELECT happenings.id::integer, happenings.map_name, happenings.author_id, happenings.place, happenings.teamsize,
             happenings.description, happenings.status, happenings.start_at, happenings.end_at, happenings.thumbnail, users.username, users.avatar,
@@ -113,7 +113,7 @@ class Service {
         }
     }
 
-    async updateEvent(data: EventRequest & { id: string }) {
+    async updateEvent(data: EventRequest & { id: number }) {
         try {
             if(data.eventEndDate === undefined || data.eventEndDate === "" || data.eventEndTime === "" || data.eventEndTime === undefined) {
                 await Db.query<{ id: string }>("UPDATE happenings SET place = $1, map_name = $2, teamsize = $3, description = $4, start_at = $5, thumbnail = $6 WHERE id = $7", [data.place, data.mapName, data.teamSize, data.description, `${data.eventStartDate} ${data.eventStartTime}`, data.thumbnail as string ?? null, data.id])
@@ -128,7 +128,7 @@ class Service {
         }
     }
 
-    async getAllEvents(userId: string): Promise<QueryResult<Event>> {
+    async getAllEvents(userId: number): Promise<QueryResult<Event>> {
         const events = await Db.query<Event>(
             `SELECT happenings.id::integer, happenings.map_name, happenings.author_id, happenings.place, happenings.teamsize,
             happenings.description, happenings.status, happenings.start_at, happenings.end_at, happenings.thumbnail, users.username, users.avatar,
@@ -150,11 +150,11 @@ class Service {
         return events
     }
 
-    async findHappeningById(id: string): Promise<QueryResult<DBHappening>> {
+    async findHappeningById(id: number): Promise<QueryResult<DBHappening>> {
         return await Db.query<DBHappening>("SELECT * FROM happenings WHERE id = $1 LIMIT 1", [id])
     }
 
-    async startHappening(happeningId: string): Promise<boolean> {
+    async startHappening(happeningId: number): Promise<boolean> {
         const happening = await (await this.findHappeningById(happeningId)).rows[0]
 
         switch (happening.place) {
@@ -197,7 +197,7 @@ class Service {
         }
     }
 
-    async endHappening(happeningId: string): Promise<boolean> {
+    async endHappening(happeningId: number): Promise<boolean> {
         let happening = await (await this.findHappeningById(happeningId)).rows[0]
 
         
@@ -222,7 +222,7 @@ class Service {
         }
     }
 
-    async deleteHappening(happeningId: string): Promise<boolean> {
+    async deleteHappening(happeningId: number): Promise<boolean> {
         try {
             await Db.query("DELETE FROM happenings WHERE id = $1", [happeningId])
             return true
@@ -232,16 +232,16 @@ class Service {
         }
     }
 
-    async isInterested(userId: string, happeningId: string): Promise<{is_interested: 0 | 1}> {
+    async isInterested(userId: number, happeningId: number): Promise<{is_interested: 0 | 1}> {
         return await (await Db.query<{ is_interested: 0 | 1 }>("SELECT COUNT(*)::integer as is_interested FROM interested_happenings WHERE user_id = $1 AND happening_id = $2", [userId, happeningId])).rows[0]
     }
 
-    async setInterested(userId: string, happeningId: string, isInterested: boolean) {
+    async setInterested(userId: number, happeningId: number, isInterested: boolean) {
         const happening = await this.findHappeningById(happeningId)
 
         let interested = 0
 
-        if (happening.rows[0].author_id.toString() == userId) interested = 1
+        if (happening.rows[0].author_id == userId) interested = 1
 
         if (isInterested) {
             return await Db.query("INSERT INTO interested_happenings (user_id, happening_id, in_team) VALUES($1, $2, $3)", [userId, happeningId, interested])
@@ -250,15 +250,15 @@ class Service {
         return await Db.query("DELETE FROM interested_happenings WHERE user_id = $1 AND happening_id = $2", [userId, happeningId])
     }
 
-    async getInterestedPlayers(happeningId: string): Promise<QueryResult<InterestedPlayer>> {
+    async getInterestedPlayers(happeningId: number): Promise<QueryResult<InterestedPlayer>> {
         return await Db.query<InterestedPlayer>("SELECT interested_happenings.in_team, users.username, users.id::integer, users.avatar FROM interested_happenings INNER JOIN users ON users.id = interested_happenings.user_id WHERE interested_happenings.happening_id = $1", [happeningId])
     }
 
-    async isUserInTeam(happeningId: string, userId: string): Promise<QueryResult<{in_team: 0 | 1}>> {
+    async isUserInTeam(happeningId: number, userId: number): Promise<QueryResult<{in_team: 0 | 1}>> {
         return await Db.query<{in_team: 1 | 0}>("SELECT in_team FROM interested_happenings WHERE user_id = $1 AND happening_id = $2", [userId, happeningId])
     }
 
-    async updateIsUserInTeam(happeningId: string, userId: string, value: 1 | 0) {
+    async updateIsUserInTeam(happeningId: number, userId: number, value: 1 | 0) {
         return await Db.query("UPDATE interested_happenings SET in_team = $1 WHERE user_id = $2 AND happening_id = $3", [value, userId, happeningId])
     }
 }

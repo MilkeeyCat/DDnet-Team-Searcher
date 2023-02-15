@@ -5,7 +5,7 @@ import { Role } from "../Role.type";
 import { User, UserWithPermissions } from "@app/shared/types/User.type.js"
 import { Run } from "../Happenings.type.js"
 
-export type RegistrationResponse = APIResponse<"REGISTRATION_FAILED" | "REGISTRATION_SUCCESSFUL", {
+export type RegistrationResponse = APIResponse<"REGISTRATION_FAILED" | "REGISTRATION_SUCCESSFUL" | "ERROR_OCCURED", {
     field: keyof RegistrationRequest;
     text: string;
 } | string>

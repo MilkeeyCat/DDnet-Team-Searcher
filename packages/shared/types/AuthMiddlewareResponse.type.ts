@@ -1,6 +1,6 @@
 import { Response } from "express"
 
 export type AuthMiddlewareResponse<T = any, K = unknown> = Response<T, {user: {
-    id: string,
+    id: number,
     email: string
 }} & K>

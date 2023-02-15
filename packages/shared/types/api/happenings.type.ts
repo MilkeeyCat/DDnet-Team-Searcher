@@ -6,24 +6,24 @@ import { Run, Event } from "../Happenings.type.js"
 
 export type GetAllRunsResponse = APIResponse<"SUCCESS", Array<Run>>
 
-export type CreateRunResponse = APIResponse<"RUN_CREATION_FAILED" | "RUN_CREATED_SUCCESSFULLY", {
+export type CreateRunResponse = APIResponse<"RUN_CREATION_FAILED" | "RUN_CREATED_SUCCESSFULLY" | "ERROR_OCCURRED" | "BAD_DATA", {
     field: keyof RunRequest;
     text: string;
 } | string>
 
-export type UpdateRunResponse = APIResponse<"RUN_UPDATING_FAILED" | "RUN_UPDATED_SUCCESSFULLY", {
+export type UpdateRunResponse = APIResponse<"RUN_UPDATING_FAILED" | "RUN_UPDATED_SUCCESSFULLY" | "BAD_DATA" | "ERROR_OCCURRED", {
     field: keyof RunRequest;
     text: string;
 } | string>
 
-export type UpdateEventResponse = APIResponse<"EVENT_UPDATING_FAILED" | "EVENT_UPDATED_SUCCESSFULLY" | "ERROR_OCCURED", {
+export type UpdateEventResponse = APIResponse<"EVENT_UPDATING_FAILED" | "EVENT_UPDATED_SUCCESSFULLY" | "ERROR_OCCURRED" | "BAD_DATA", {
     field: keyof EventRequest;
     text: string;
 } | string>
 
 export type GetAllEventsResponse = APIResponse<"SUCCESS", Array<Event>>
 
-export type CreateEventResponse = APIResponse<"EVENT_CREATION_FAILED" | "EVENT_CREATED_SUCCESSFULLY", {
+export type CreateEventResponse = APIResponse<"EVENT_CREATION_FAILED" | "EVENT_CREATED_SUCCESSFULLY" | "BAD_DATA", {
     field: keyof EventRequest;
     text: string;
 } | string>

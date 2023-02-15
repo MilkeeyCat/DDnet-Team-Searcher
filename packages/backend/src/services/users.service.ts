@@ -23,8 +23,8 @@ export class Service {
         }
     }
 
-    async isUserExistsByUsername(username: string): Promise<string | false> {
-        const res = await Db.query<{id: string}>("SELECT id FROM users WHERE username = $1 LIMIT 1", [username])
+    async isUserExistsByUsername(username: string): Promise<number | false> {
+        const res = await Db.query<{id: number}>("SELECT id::integer FROM users WHERE username = $1 LIMIT 1", [username])
     
         if(res.rowCount) {
             return res.rows[0].id
@@ -33,8 +33,8 @@ export class Service {
         }
     }
 
-    async isUserExistsByEmail(userEmail: string): Promise<string | false> {
-        const res = await Db.query<{id: string}>("SELECT id FROM users WHERE email = $1 LIMIT 1", [userEmail])
+    async isUserExistsByEmail(userEmail: string): Promise<number | false> {
+        const res = await Db.query<{id: number}>("SELECT id::integer FROM users WHERE email = $1 LIMIT 1", [userEmail])
     
         if(res.rowCount) {
             return res.rows[0].id
@@ -43,8 +43,8 @@ export class Service {
         }
     }
 
-    async isUserExistsById(userId: string): Promise<string | false> {
-        const res = await Db.query<{id: string}>("SELECT id FROM users WHERE id = $1 LIMIT 1", [userId])
+    async isUserExistsById(userId: number): Promise<number | false> {
+        const res = await Db.query<{id: number}>("SELECT id::integer FROM users WHERE id = $1 LIMIT 1", [userId])
         
         if(res.rowCount) {
             return res.rows[0].id
@@ -53,10 +53,8 @@ export class Service {
         }
     }
 
-    async getUserData<T extends boolean = false, P extends boolean = false>(userId: string, withPassword: T = false as T, withPermissions: P = false as P): Promise<T extends true ? UserWithPassword : P extends true ? UserWithPermissions : User> {
+    async getUserData<T extends boolean = false, P extends boolean = false>(userId: number, withPassword: T = false as T, withPermissions: P = false as P): Promise<T extends true ? UserWithPassword : P extends true ? UserWithPermissions : User> {
         const res = await (await Db.query<T extends true ? UserWithPassword : P extends true ? UserWithPermissions : User>(`SELECT id::integer, username, email, avatar, created_at, tier, verified${withPassword ? `, password` : ``} FROM users WHERE id = $1 LIMIT 1`, [userId])).rows[0]
-
-        console.log("RES", res);
 
         if(withPermissions) {
             const permissions = await RolesService.getUserPermissions(userId);

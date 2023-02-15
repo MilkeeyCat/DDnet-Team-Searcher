@@ -11,12 +11,12 @@ type DBRoles = {
 } & Permissions
 
 class Service {
-    async getUserRoles(userId: string): Promise<QueryResult<Role>> {
+    async getUserRoles(userId: number): Promise<QueryResult<Role>> {
         return await Db.query(`SELECT roles.name, roles.color, roles.url FROM users_roles INNER JOIN roles ON roles.id = users_roles.role_id WHERE users_roles.user_id = $1`, [userId])
     }
 
-    async getUserPermissions(userId: string): Promise<Permissions> {
-        // I didnt know how to put all of this shit in one query so I will leave it as 4 questions :\
+    async getUserPermissions(userId: number): Promise<Permissions> {
+        // I didnt know how to put all of this shit in one query so I will leave it as 4 queries :\
         const can_ban = await this.checkPermission(userId, "can_ban")
         const can_create_roles = await this.checkPermission(userId, "can_create_roles")
         const can_edit_posts = await this.checkPermission(userId, "can_edit_posts")
@@ -30,7 +30,7 @@ class Service {
         }
     }
 
-    async checkPermission(userId: string, permissionName: keyof Permissions): Promise<1 | 0> {
+    async checkPermission(userId: number, permissionName: keyof Permissions): Promise<1 | 0> {
         const res = await Db.query(`
         SELECT roles.${permissionName} FROM users_roles INNER JOIN roles ON roles.id = users_roles.role_id WHERE users_roles.user_id = $1 AND roles.${permissionName} = 1;
         `, [userId])
