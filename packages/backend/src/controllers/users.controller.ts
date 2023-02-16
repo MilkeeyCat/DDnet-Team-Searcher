@@ -8,10 +8,12 @@ import { LoginRequest } from "@app/shared/types/LoginRequest.type"
 // import { RunsService } from "../services/runs.service.js"
 import { RolesService } from "../services/roles.service.js"
 import { ResponseHandler } from "@app/shared/types/ReponseHandler.type"
-import { LoginResponse, RegistrationResponse, UserDataResponse, UserFollowResponse, UserProfileResponse, UserReportResponse, UserRolesResponse, UserRunsResponse } from "@app/shared/types/api/users.types"
+import { LoginResponse, RegistrationResponse, UserDataResponse, UserEventsResponse, UserFollowResponse, UserGetReviewsAboutUserResponse, UserProfileResponse, UserReportResponse, UserRolesResponse, UserRunsResponse } from "@app/shared/types/api/users.types"
 import { HappeningsService } from "../services/happenings.service.js"
 import { FollowersService } from "../services/followers.service.js"
 import { ReportsService } from "../services/reports.service.js"
+import { User } from "@app/shared/types/User.type.js"
+import { ReviewsService } from "../services/reviews.service.js"
 
 class Controller {
     async register(req: Request<any, any, RegistrationRequest>, res: ResponseHandler<RegistrationResponse>): Promise<void> {
@@ -145,6 +147,36 @@ class Controller {
         }
     }
 
+    async getUserEvents(req: Request<{userId: number}>, res: ResponseHandler<UserEventsResponse, AuthMiddlewareResponse>): Promise<void> {
+        const {userId} = req.params
+        
+        if(userId !== undefined) {
+            // show somebody's profile
+            const user = await UsersService.isUserExistsById(userId)
+
+            if(user) {
+                // user exists
+                const runs = await HappeningsService.getUserEvents(userId)
+
+                res.json({
+                    status: "SUCCESS",
+                    data: runs.rows
+                })
+            } else {
+                // user does not exist
+                res.status(404).json({status: "USER_NOT_FOUND"})
+            }
+        } else {
+            // show own profile
+            const runs = await HappeningsService.getUserEvents(res.locals.user.id)
+
+            res.json({
+                status: "SUCCESS",
+                data: runs.rows
+            })
+        }
+    }
+
     async getUserRuns(req: Request<{userId: number}>, res: ResponseHandler<UserRunsResponse, AuthMiddlewareResponse>): Promise<void> {
         const {userId} = req.params
         
@@ -233,6 +265,41 @@ class Controller {
                 data: "Some error has occured"
             })
         }
+    }
+
+    async getReviewsAboutUser(req: Request<{userId?: number}>, res: ResponseHandler<UserGetReviewsAboutUserResponse, AuthMiddlewareResponse>) {
+        const {userId} = req.params
+        
+        let user: User
+
+        if(userId) {
+            user = await UsersService.getUserData(userId)
+        } else {
+            user = await UsersService.getUserData(res.locals.user.id)
+        }
+        
+        if(!user) {
+            res.json({
+                status: "BAD_DATA",
+                data: "User doesnt exist"
+            })
+            return
+        }
+
+        const reviews = await ReviewsService.getReviewsAboutUser(user.id)
+
+        if(reviews) {
+            res.json({
+                status: "SUCCESS",
+                data: reviews
+            })
+            return
+        }
+
+        res.json({
+            status: "ERROR_OCCURRED",
+            data: "Some error has occurred D:"
+        })
     }
 }
 

@@ -7,3 +7,5 @@ export type Review = {
     author: User;
     reviewedUser: User
 }
+
+export type ReviewAboutUser = Omit<Review, "reviewedUser">

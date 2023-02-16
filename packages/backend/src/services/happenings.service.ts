@@ -80,7 +80,7 @@ class Service {
             happenings.description, happenings.status, happenings.start_at, happenings.end_at, happenings.thumbnail, users.username, users.avatar,
             (SELECT count(*)::integer AS is_interested FROM interested_happenings WHERE user_id = $1 AND happening_id = happenings.id),
             (SELECT count(*)::integer AS interested FROM interested_happenings WHERE happening_id = happenings.id)
-            FROM happenings JOIN users ON users.id = happenings.author_id WHERE type = 'run' AND happenings.author_id = $2 ORDER BY happenings.id DESC`, [userId, userId])
+            FROM happenings JOIN users ON users.id = happenings.author_id WHERE type = 'run' AND happenings.author_id = $1 ORDER BY happenings.id DESC`, [userId])
 
         for (const run of runs.rows) {
             if (!!run.server_id) {
@@ -135,6 +135,28 @@ class Service {
             (SELECT count(*)::integer AS is_interested FROM interested_happenings WHERE user_id = $1 AND happening_id = happenings.id),
             (SELECT count(*)::integer AS interested FROM interested_happenings WHERE happening_id = happenings.id)
             FROM happenings JOIN users ON users.id = happenings.author_id WHERE type = 'event' ORDER BY happenings.id DESC`, [userId])
+
+        for (const row of events.rows) {
+            if (!!row.server_id) {
+                const query = await ServersService.findServerById(row.server_id)
+                const server = query.rows[0]
+
+                row.connect_string = `password "${server.password}"; connect ${server.ip}:${server.port}`
+            }
+
+            delete (row as Partial<Event>).server_id
+        }
+
+        return events
+    }
+
+    async getUserEvents(userId: number): Promise<QueryResult<Event>> {
+        const events = await Db.query<Event>(
+            `SELECT happenings.id::integer, happenings.map_name, happenings.author_id, happenings.place, happenings.teamsize,
+            happenings.description, happenings.status, happenings.start_at, happenings.end_at, happenings.thumbnail, users.username, users.avatar,
+            (SELECT count(*)::integer AS is_interested FROM interested_happenings WHERE user_id = $1 AND happening_id = happenings.id),
+            (SELECT count(*)::integer AS interested FROM interested_happenings WHERE happening_id = happenings.id)
+            FROM happenings JOIN users ON users.id = happenings.author_id WHERE type = 'event' AND happenings.author_id = $1 ORDER BY happenings.id DESC`, [userId])
 
         for (const row of events.rows) {
             if (!!row.server_id) {

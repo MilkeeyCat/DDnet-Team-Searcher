@@ -47,10 +47,22 @@ Router.get(
     UsersController.getUserRoles as any
 )
 Router.get(
+    '/user/:userId?/events',
+    authMiddleware,
+    paramsValidatorMiddleware(idSchema, ['userId']),
+    UsersController.getUserEvents as any
+)
+Router.get(
     '/user/:userId?/runs',
     authMiddleware,
     paramsValidatorMiddleware(idSchema, ['userId']),
     UsersController.getUserRuns as any
+)
+Router.get(
+    '/user/:userId?/reviews',
+    authMiddleware,
+    paramsValidatorMiddleware(idSchema, ['userId']),
+    UsersController.getReviewsAboutUser as any
 )
 
 export const UsersRouter = Router

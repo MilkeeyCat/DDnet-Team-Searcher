@@ -3,7 +3,8 @@ import { LoginRequest } from "../LoginRequest.type";
 import { RegistrationRequest } from "../RegistrationRequest.type";
 import { Role } from "../Role.type";
 import { User, UserWithPermissions } from "@app/shared/types/User.type.js"
-import { Run } from "../Happenings.type.js"
+import { Event, Run } from "../Happenings.type.js"
+import { ReviewAboutUser } from "../Review.type";
 
 export type RegistrationResponse = APIResponse<"REGISTRATION_FAILED" | "REGISTRATION_SUCCESSFUL" | "ERROR_OCCURED", {
     field: keyof RegistrationRequest;
@@ -25,4 +26,8 @@ export type UserProfileResponse = APIResponse<"USER_NOT_FOUND" | "SUCCESS", User
 
 export type UserRunsResponse = APIResponse<"USER_NOT_FOUND" | "SUCCESS", Array<Run>>
 
+export type UserEventsResponse = APIResponse<"USER_NOT_FOUND" | "SUCCESS", Array<Event>>
+
 export type UserReportResponse = APIResponse<"SUCCESS" | "ERROR_OCCURED" | "USER_ALREADY_REPORTED", string>
+
+export type UserGetReviewsAboutUserResponse = APIResponse<"BAD_DATA" | "SUCCESS" | "ERROR_OCCURRED", string | Array<ReviewAboutUser>>

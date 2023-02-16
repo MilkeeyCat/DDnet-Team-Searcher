@@ -5,7 +5,7 @@ import { ClockIcon } from "../../components/ui/Icons/Clock"
 import { Button } from "../../components/ui/Button"
 import { useAppDispatch, useAppSelector } from "../../utils/hooks/hooks"
 import { Avatar } from "../../components/Avatar"
-import { useFollowUserMutation, useGetUserProfileQuery, useGetUserRolesQuery, useReportUserMutation } from "../../api/users-api"
+import { useFollowUserMutation, useGetReviewsAboutUserQuery, useGetUserEventsQuery, useGetUserProfileQuery, useGetUserRolesQuery, useGetUserRunsQuery, useReportUserMutation } from "../../api/users-api"
 import { Graph } from "./Graph"
 import classNames from "classnames"
 import { Modal } from "../../components/ui/Modal"
@@ -14,12 +14,18 @@ import { TextareaWithLabel } from "../AuthorizedMain/TextareaWithLabel"
 import { useState } from "react"
 import { addHint } from "../../store/slices/hints"
 import { UserReportResponse } from "@app/shared/types/api/users.types"
+import { Run } from "../AuthorizedMain/Run"
+import { Event } from "../AuthorizedMain/Event"
+import defaultTee from "../../assets/images/default-tee.png"
 
 export const Profile = () => {
     const {userId}: {userId?: string} = useParams()
     const authedUserId = useAppSelector(state => state.app.user.id)
     const { data: user, refetch, isSuccess, isError } = useGetUserProfileQuery(parseInt(userId || "") || authedUserId || 0)
     const { data: roles } = useGetUserRolesQuery(parseInt(userId || "") || authedUserId || 0)
+    const { data: runs, isSuccess: areRunsLoaded } = useGetUserRunsQuery(parseInt(userId || "") || authedUserId || 0)
+    const { data: events, isSuccess: areEventsLoaded } = useGetUserEventsQuery(parseInt(userId || "") || authedUserId || 0)
+    const { data: reviews, isSuccess: areReviewsLoaded } = useGetReviewsAboutUserQuery(parseInt(userId || "") || authedUserId || 0)
     const [followUser] = useFollowUserMutation()
     const [reportUser] = useReportUserMutation()
     const sameUser = parseInt(userId || "") === authedUserId || !userId
@@ -138,7 +144,49 @@ export const Profile = () => {
                         <p className="opacity-[.87]">runs finished</p>
                     </li>
                 </ul>
-                <Graph username={user?.username || ""}/>
+                <section className="mt-[60px]">
+                    <h2 className="text-3xl text-[white] text-center">{user.username}'s last events</h2>
+                    <div className="w-full flex justify-around flex-wrap">
+                        {areEventsLoaded && events?.map(event => (
+                            <Event className="mt-5" onClick={()=>{}} event={event} />
+                        ))}
+                    </div>
+                </section>
+                <section className="mt-[60px]">
+                    <h2 className="text-3xl text-[white] text-center">{user.username}'s last runs</h2>
+                    <div className="max-w-[80%] w-full mx-auto flex flex-wrap justify-around">
+                        {areRunsLoaded && runs?.data?.map(run => (
+                            <Run className="mt-5" onClick={()=>{}} run={run} />
+                        ))}
+                    </div>
+                </section>
+                <section className="max-w-[80%] mx-auto w-full mt-[60px]">
+                    <Graph username={user?.username || ""}/>
+                </section>
+                <section className="mt-[60px] mb-[200px]">
+                    <h2 className="text-3xl text-[white] text-center">What people say about {user.username}</h2>
+                    <div>
+                    {areReviewsLoaded && typeof reviews != "string" && reviews?.map(({text, rate, author: {avatar, username}}) => (
+                        <div className="flex mt-12 max-w-[600px] w-full mx-auto">
+                            <div>
+                                <Avatar size={50} username={username} src={avatar}/>
+                            </div>
+                            <div className="ml-1">
+                                <p className="font-semibold text-[white]">{username}</p>
+                                <div className="flex items-center">
+                                    <div className="flex -ml-1">
+                                        {rate && new Array(rate).fill(rate).map(item => (
+                                            <img className="max-w-7 h-7 [&:not(:first-child)]:-ml-3" src={defaultTee} />
+                                        ))}
+                                    </div>
+                                    <span className="text-xs text-[white] opacity-60 ml-1">4 days ago</span>
+                                </div>
+                                <p className="text-[white] mt-2.5">{text}</p>
+                            </div>
+                        </div>
+                    ))}
+                    </div>
+                </section>
             </div> }
         </>
     )

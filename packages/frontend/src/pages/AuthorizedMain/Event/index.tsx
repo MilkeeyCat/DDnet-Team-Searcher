@@ -19,9 +19,10 @@ import { setEditingHappeningId, setEditingHappeningType, setIsEditHappeningModal
 interface OwnProps {
     event: EventType;
     onClick: () => void;
+    className?: string;
 }
 
-export const Event: React.FC<OwnProps> = ({onClick, event}) => {
+export const Event: React.FC<OwnProps> = ({className, onClick, event}) => {
     const {
         author_id,
         avatar,
@@ -129,7 +130,7 @@ export const Event: React.FC<OwnProps> = ({onClick, event}) => {
     const thumbnailUrl = thumbnail ? `http://localhost:8080/public/${thumbnail}` : `https://ddnet.org/ranks/maps/${map_name.replaceAll(" ", "_")}.png`
 
     return (
-        <div className={"event"}>
+        <div className={classNames("event", {[className || ""]: !!className})}>
             <div className="event__inner">
                 <div className="row jc-sb">
                     <EventStartTime startAt={start_at} status={status}/>

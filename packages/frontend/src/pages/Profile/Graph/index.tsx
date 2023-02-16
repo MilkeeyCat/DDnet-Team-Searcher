@@ -72,9 +72,6 @@ export const Graph = ({username}: OwnProps) => {
         ],
     }
 
-    console.log(data);
-    
-
     return (
         <>
         { fetchedData &&

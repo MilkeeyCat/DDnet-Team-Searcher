@@ -19,9 +19,10 @@ import { setEditingHappeningId, setEditingHappeningType, setIsEditHappeningModal
 interface OwnProps {
     run: RunType;
     onClick: () => void;
+    className?: string;
 }
 
-export const Run: React.FC<OwnProps> = ({onClick, run}) => {
+export const Run: React.FC<OwnProps> = ({className, onClick, run}) => {
     const {
         author_id,
         avatar,
@@ -124,7 +125,7 @@ export const Run: React.FC<OwnProps> = ({onClick, run}) => {
     }
 
     return (
-        <div className={"run"}>
+        <div className={classNames("run", {[className || ""]: className})}>
             <img src={`https://ddnet.org/ranks/maps/${map_name.replaceAll(" ", "_")}.png`} className={"run__thumbnail"} alt="map thumbnail"/>
             <div className="run__inner">
                 <div className="row jc-sb">

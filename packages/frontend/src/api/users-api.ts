@@ -11,6 +11,8 @@ import {
     UserRunsResponse,
     UserFollowResponse,
     UserReportResponse,
+    UserEventsResponse,
+    UserGetReviewsAboutUserResponse,
 } from '@app/shared/types/api/users.types'
 
 export const usersApi = createApi({
@@ -73,6 +75,10 @@ export const usersApi = createApi({
                 }
             },
         }),
+        getUserEvents: build.query<UserEventsResponse['data'], number>({
+            query: (userId) => `user/${userId}/events`,
+            transformResponse: (res: UserEventsResponse) => res.data
+        }),
         getUserRoles: build.query<UserRolesResponse['data'], number>({
             query: (userId) => ({
                     url: `user/${userId}/roles`,
@@ -94,6 +100,10 @@ export const usersApi = createApi({
                 body: {text: body.text}
             }),
             transformErrorResponse: (res) => res.data
+        }),
+        getReviewsAboutUser: build.query<UserGetReviewsAboutUserResponse['data'], number>({
+            query: (userId) => `/user/${userId}/reviews`,
+            transformResponse: (res: UserGetReviewsAboutUserResponse) => res.data
         })
     }),
 })
@@ -104,7 +114,9 @@ export const {
     useLazyGetUserDataQuery,
     useGetUserProfileQuery,
     useGetUserRunsQuery,
+    useGetUserEventsQuery,
     useGetUserRolesQuery,
     useFollowUserMutation,
-    useReportUserMutation
+    useReportUserMutation,
+    useGetReviewsAboutUserQuery
 } = usersApi
