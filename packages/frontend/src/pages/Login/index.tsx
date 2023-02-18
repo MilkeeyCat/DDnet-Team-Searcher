@@ -1,4 +1,3 @@
-import loginPageBackground from "../../assets/images/login-page-background.png"
 import { Field, Form, Formik, FormikHelpers } from "formik"
 import { Input } from "../../components/Input"
 import { Button } from "../../components/ui/Button"
@@ -14,7 +13,6 @@ import { LoginForm } from "../../types/LoginForm.type"
 import { useLoginUserMutation } from "../../api/users-api"
 import { setIsAuthed } from "../../store/slices/app"
 import { LoginResponse } from "@app/shared/types/api/users.types"
-import "./styles.scss"
 
 export const Login = () => {
     const [ loginUser ] = useLoginUserMutation()
@@ -61,23 +59,22 @@ export const Login = () => {
 
     return (
         <>
-            <div className={"login-form-wrapper"}>
-                <img src={loginPageBackground} alt=""/>
-                <div className="login-form-wrapper__inner">
-                    <p className="login-form-wrapper__header">Login in your account<br/> and <span
+            <div className={`bg-[url("/src/assets/images/login-page-background.png")] mb-[150px] h-[1093px]`}>
+                <div className="pt-[120px] w-fit mx-auto">
+                    <p className="text-[white] text-[40px]">Login in your account<br/> and <span
                         className={"selected-text"}>something</span> will happen.</p>
                     <Formik initialValues={initialValues} validate={validation} onSubmit={onSubmit}>
-                        <Form className={"login-form"}>
-                            <div className={"login-form__row"}>
+                        <Form>
+                            <div className="flex flex-wrap mt-[100px] [&>*:not(:first-child)]:ml-[65px]">
                                 <Field autoComplete={"off"} name={"username"} placeholder={"Username"} component={Input}/>
                                 <Field autoComplete={"off"} name={"password"} placeholder={"Password"} type={"password"} component={Input}/>
                             </div>
-                            <div className={"login-form__remember-me"}>
+                            <div className="mt-2.5 text-[white]">
                                 <Field name={"rememberMe"} as={Checkbox}/>
-                                <span>Remember me</span>
+                                <span className="ml-2.5">Remember me</span>
                             </div>
-                            <Link to={"/forgor-password"} onClick={()=>alert("Sucks to be you!")} className={"login-form__forgor-password"}>Forgor password?</Link>
-                            <Button type={"submit"} styleType={"filled"} className={"login-form__btn"}>Login</Button>
+                            <Link to={"/forgor-password"} onClick={()=>alert("Sucks to be you!")} className="mt-2.5 text-[white] block">Forgor password?</Link>
+                            <Button type={"submit"} styleType={"filled"} className="mt-[35px]">Login</Button>
                         </Form>
                     </Formik>
                 </div>

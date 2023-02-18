@@ -19,7 +19,3 @@ export const Input: React.FC<FieldProps & OwnProps> = ({field, form, ...props}) 
         </div>
     )
 }
-
-// const MyInput = ({ field, form, ...props }) => {
-//     return <input {...field} {...props} />;
-// };

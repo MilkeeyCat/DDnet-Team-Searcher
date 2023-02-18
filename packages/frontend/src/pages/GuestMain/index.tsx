@@ -79,7 +79,7 @@ export const GuestMain = () => {
                             <p className="mt-2.5">TEAMS NEED YOU</p>
                         </div>
                     </div>
-                    <Button styleType={"bordered"} className="mt-10 max-w-fit text-sm sm:text-base !bg-[rgba(38, 34, 29, .8)]"><img src={arrowDown} alt="arrow down"/>What's
+                    <Button styleType={"bordered"} className="mt-10 max-w-fit text-sm sm:text-base !bg-[rgba(38,34,29,.8)]"><img src={arrowDown} alt="arrow down"/>What's
                         DDrace Team Searcher?</Button>
                 </div>
             </div>
