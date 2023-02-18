@@ -107,11 +107,11 @@ export const HappeningInfoModal: React.FC<OwnProps> = ({type, happeningId, onClo
                         ))}
                     </ul>
                 </div>
-                <div className="transition-all pr-3 duration-500 max-w-full w-full max-h-[450px] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-[#3F362B] [&::-webkit-scrollbar-thumb]:bg-[#89745A] [&::-webkit-scrollbar-thumb]:rounded-[10px] overflow-y-scroll shrink-0 relative" style={{right: `${slideNum * 100}%`}}>
+                {/* <div className="transition-all pr-3 duration-500 max-w-full w-full max-h-[450px] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-[#3F362B] [&::-webkit-scrollbar-thumb]:bg-[#89745A] [&::-webkit-scrollbar-thumb]:rounded-[10px] overflow-y-scroll shrink-0 relative" style={{right: `${slideNum * 100}%`}}>
                     {reviews?.data && reviews.data.map((review, id) => (
                         <Review key={id} review={review} />
                     ))}
-                </div>
+                </div> */}
             </div>
             <div className={"flex justify-end rounded-b-[10px] py-4 px-5 bg-[#1A1714] text-primary-1"}>
                 {authedUser?.in_team === 1 && happening.status == 1 &&
