@@ -20,13 +20,13 @@ export const EventStartTime: React.FC<EventStartTimeProps> = ({startAt, status})
     }) // for example 5:24 pm
 
     return (
-        <div className="run__start-at">
+        <div className="flex items-center">
             <CalendarIcon
                 color={status === 0 ? "var(--app-color)" : status === 1 ? "var(--app-green)" : status === 2 ? "red" : ""}/>
-            <span className={classNames("run__time", {"run__time_happening": status === 1})}>
-                {status === 0 && `${startDateWithWeekday}th ∙ ${startTime}` /* event didnt start */}
-                {status === 1 && `Happening Now` /* happening right now */}
-                {status === 2 && `Finished` /* happening right now */}
+            <span className={classNames("text-[12px] ml-2.5 font-semibold text-[white]", {"text-success": status === 1})}>
+                {status === 0 && `${startDateWithWeekday}th ∙ ${startTime}`}
+                {status === 1 && `Happening Now`}
+                {status === 2 && `Finished`}
             </span>
         </div>
     )

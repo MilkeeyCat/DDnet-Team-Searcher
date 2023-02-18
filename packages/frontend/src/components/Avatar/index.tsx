@@ -1,5 +1,3 @@
-import "./styles.scss"
-
 interface OwnProps {
     src: string | null;
     username: string;
@@ -27,9 +25,9 @@ function rainbow(numOfSteps: number, step: number) {
 
 export const Avatar: React.FC<OwnProps> = ({src, username, size = 20}) => {
     return (
-        <div className={"avatar"} style={{"width": `${size}px`, "height": `${size}px`}}>
+        <div className="w-full flex justify-center items-center" style={{"width": `${size}px`, "height": `${size}px`}}>
             {src === null ?
-                <p style={{"background": rainbow(username.charCodeAt(0), username.length), fontSize: size / 1.5}} className={"avatar__letter"}>{username[0]}</p>
+                <p style={{"background": rainbow(username.charCodeAt(0), username.length), fontSize: size / 1.5}} className="w-full rounded-[50%] flex items-center justify-center">{username[0]}</p>
                 :
                 <img src={src}/>
             }

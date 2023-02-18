@@ -11,7 +11,6 @@ import { useDeleteHappeningMutation, useEndHappeningMutation, useSetIsInterested
 import { setIsInterestedInRun, setRuns, updateRunStatus } from "../../../store/slices/happenings"
 import { useOutsideClickHandler } from "../../../utils/hooks/useClickedOutside"
 import { Run as RunType } from "@app/shared/types/Happenings.type"
-import "./styles.scss"
 import { Link } from "react-router-dom"
 import { hint } from "../../../store/slices/hints"
 import { setEditingHappeningId, setEditingHappeningType, setIsEditHappeningModalHidden } from "../../../store/slices/app"
@@ -132,34 +131,34 @@ export const Run: React.FC<OwnProps> = ({className, onClick, run}) => {
     }
 
     return (
-        <div className={classNames("run", {[className || ""]: className})}>
-            <img src={`https://ddnet.org/ranks/maps/${map_name.replaceAll(" ", "_")}.png`} className={"run__thumbnail"} alt="map thumbnail"/>
-            <div className="run__inner">
-                <div className="row jc-sb">
+        <div className={classNames("max-w-[255px] w-full bg-primary-2 rounded-[10px] flex flex-col", {[className || ""]: className})}>
+            <img src={`https://ddnet.org/ranks/maps/${map_name.replaceAll(" ", "_")}.png`} className="w-full max-h-[100px] object-cover rounded-t-[10px]" alt="map thumbnail"/>
+            <div className="p-2.5 flex flex-col grow-[1]">
+                <div className="flex justify-between">
                     <EventStartTime startAt={start_at} status={status}/>
-                    <div className={"run__interested"}>
+                    <div className={"bg-primary-3 text-[white] py-[3px] px-[7px] rounded-full flex items-center"}>
                         <img src={peopleIcon}/>
-                        <span>{interested}</span>
+                        <span className="text-[12px] ml-1">{interested}</span>
                     </div>
                 </div>
                 <EventPlace place={place}/>
-                <p className="run__title" onClick={onClick}>{map_name}</p>
-                <p className="run__description">{description}</p>
-                <div className="run__footer row jc-sb">
+                <p className="mt-4 text-[white] font-semibold cursor-pointer" onClick={onClick}>{map_name}</p>
+                <p className="mt-1 text-[white]">{description}</p>
+                <div className="mt-auto flex items-center justify-between">
                     <Link to={`/profile/${run.author_id}`}>
                         <Avatar src={null} username={username}/>
                     </Link>
-                    <div>
-                        <div className={"run__more"}>
-                            <button className={"run__more-btn"} onClick={() => setIsShowMorePanelHidden(!isShowMorePanelHidden)}>...</button>
-                            <div data-hidden={isShowMorePanelHidden} ref={ref} className={classNames({"run__more-panel": !isShowMorePanelHidden}, {"hidden": isShowMorePanelHidden})}>
-                                {isOwner && status == 0 && <button onClick={startRunCb(id)}>Start Run</button>}
-                                {isOwner && <button onClick={editRunCb}>Edit Run</button>}
-                                {isOwner && status == 1 && <button className={"run__more-panel-red"} onClick={endRunCb(id)}>End Run</button>}
-                                {isOwner && status != 1 && <button className={"run__more-panel-red"} onClick={deleteRunCb(id)}>Delete Run</button>}
+                    <div className="flex">
+                        <div className={"relative"}>
+                            <button className={"text-[white] flex"} onClick={() => setIsShowMorePanelHidden(!isShowMorePanelHidden)}>...</button>
+                            <div data-hidden={isShowMorePanelHidden} ref={ref} className={classNames({"absolute min-w-[200px] l-2.5 bg-[#15120D] flex flex-col rounded-[10px]": !isShowMorePanelHidden}, {"hidden": isShowMorePanelHidden})}>
+                                {isOwner && status == 0 && <button className="text-[white] py-2.5 px-4 rounded-[10px] transition-all duration-200 cursor-pointer text-left hover:bg-primary-1" onClick={startRunCb(id)}>Start Run</button>}
+                                {isOwner && <button className="text-[white] py-2.5 px-4 rounded-[10px] transition-all duration-200 cursor-pointer text-left hover:bg-primary-1" onClick={editRunCb}>Edit Run</button>}
+                                {isOwner && status == 1 && <button className="text-[white] py-2.5 px-4 rounded-[10px] transition-all duration-200 cursor-pointer text-left hover:bg-error" onClick={endRunCb(id)}>End Run</button>}
+                                {isOwner && status != 1 && <button className="text-[white] py-2.5 px-4 rounded-[10px] transition-all duration-200 cursor-pointer text-left hover:bg-error" onClick={deleteRunCb(id)}>Delete Run</button>}
                             </div>
                         </div>
-                        <button className={classNames("run__btn", {"run__btn-active": is_interested})} onClick={setIsInterestedCb(id)}><img src={is_interested ? checkMark : bellIcon}/>Interested</button>
+                        <button className={classNames("py-1 px-2.5 bg-primary-3 text-[white] rounded-[5px] flex items-center ml-2.5", {"bg-[#383129] text-primary-1": is_interested})} onClick={setIsInterestedCb(id)}><img className="mr-2.5" src={is_interested ? checkMark : bellIcon}/>Interested</button>
                     </div>
                 </div>
             </div>
