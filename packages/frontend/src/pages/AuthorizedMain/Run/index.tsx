@@ -13,7 +13,7 @@ import { useOutsideClickHandler } from "../../../utils/hooks/useClickedOutside"
 import { Run as RunType } from "@app/shared/types/Happenings.type"
 import "./styles.scss"
 import { Link } from "react-router-dom"
-import { addHint } from "../../../store/slices/hints"
+import { hint } from "../../../store/slices/hints"
 import { setEditingHappeningId, setEditingHappeningType, setIsEditHappeningModalHidden } from "../../../store/slices/app"
 
 interface OwnProps {
@@ -81,7 +81,7 @@ export const Run: React.FC<OwnProps> = ({className, onClick, run}) => {
                     dispatch(setRuns([...runs.filter(run => run.id != id)]))
                 } else {
                     if(res.data) {
-                        dispatch(addHint({type: "error", text: res.data}))
+                        dispatch(hint({type: "error", text: res.data}))
                     }
                 }
 
@@ -111,8 +111,15 @@ export const Run: React.FC<OwnProps> = ({className, onClick, run}) => {
                 const res = await setIsInerested(id).unwrap()
 
                 dispatch(setIsInterestedInRun({runId: id, isInterested: res.data ? 1 : 0}))
-            } catch (e: any) {
-                console.log(e);
+            } catch (e) {
+                const err = e as any
+
+                console.log(err);
+                
+
+                if("data" in err) {
+                    dispatch(hint({type: "error", text: err.data}))
+                }
             }
         }
     }

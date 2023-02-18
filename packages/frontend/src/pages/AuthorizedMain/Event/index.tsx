@@ -13,7 +13,7 @@ import { useDeleteHappeningMutation, useEndHappeningMutation, useSetIsInterested
 import { setEvents, setIsInterestedInEvent, updateEventStatus } from "../../../store/slices/happenings"
 import "./styles.scss"
 import { Link } from "react-router-dom"
-import { addHint } from "../../../store/slices/hints"
+import { hint } from "../../../store/slices/hints"
 import { setEditingHappeningId, setEditingHappeningType, setIsEditHappeningModalHidden } from "../../../store/slices/app"
 
 interface OwnProps {
@@ -96,13 +96,13 @@ export const Event: React.FC<OwnProps> = ({className, onClick, event}) => {
                     dispatch(setEvents([...events.filter(event => event.id != id)]))
                 } else {
                     if(res.data) {
-                        dispatch(addHint({type: "error", text: res.data}))
+                        dispatch(hint({type: "error", text: res.data}))
                     }
                 }
 
             } catch (err: any) {
                 if("data" in err) {
-                    dispatch(addHint({type: "error", text: err.data}))
+                    dispatch(hint({type: "error", text: err.data}))
                 }                
             }
         }

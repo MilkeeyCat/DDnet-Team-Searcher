@@ -8,12 +8,13 @@ import { LoginRequest } from "@app/shared/types/LoginRequest.type"
 // import { RunsService } from "../services/runs.service.js"
 import { RolesService } from "../services/roles.service.js"
 import { ResponseHandler } from "@app/shared/types/ReponseHandler.type"
-import { LoginResponse, RegistrationResponse, UserDataResponse, UserEventsResponse, UserFollowResponse, UserGetReviewsAboutUserResponse, UserProfileResponse, UserReportResponse, UserRolesResponse, UserRunsResponse } from "@app/shared/types/api/users.types"
+import { LoginResponse, RegistrationResponse, UserBanResponse, UserDataResponse, UserEventsResponse, UserFollowResponse, UserGetReviewsAboutUserResponse, UserProfileResponse, UserReportResponse, UserRolesResponse, UserRunsResponse, UserUnbanResponse } from "@app/shared/types/api/users.types"
 import { HappeningsService } from "../services/happenings.service.js"
 import { FollowersService } from "../services/followers.service.js"
 import { ReportsService } from "../services/reports.service.js"
 import { User } from "@app/shared/types/User.type.js"
 import { ReviewsService } from "../services/reviews.service.js"
+import { BanService } from "../services/ban.service.js"
 
 class Controller {
     async register(req: Request<any, any, RegistrationRequest>, res: ResponseHandler<RegistrationResponse>): Promise<void> {
@@ -95,6 +96,9 @@ class Controller {
         if(isUserExists) {
             const user = await UsersService.getUserData(userId, false, false)
             const followStats = await FollowersService.getFollowStats(userId)
+            const userFinishedRunsCount = await HappeningsService.userFinishedRunsCount(userId)
+            const userFinishedEventsCount = await HappeningsService.userFinishedEventsCount(userId)
+            const isUserBanned = await BanService.isUserBanned(userId)
             
             if(res.locals.user.id !== userId) {
                 const following = await FollowersService.isUserFolling({follower: res.locals.user.id, following: userId})
@@ -102,13 +106,32 @@ class Controller {
 
                 res.json({
                     status: "SUCCESS",
-                    data: {...user, following, followStats, reported},
+                    data: {
+                        ...user,
+                        following,
+                        followStats,
+                        reported,
+                        userStats: {
+                            runsCount: userFinishedRunsCount,
+                            eventsCount: userFinishedEventsCount
+                        },
+                        banned: isUserBanned
+                    },
                 })
                 return
             }
+            
             res.json({
                 status: "SUCCESS",
-                data: {...user, followStats}
+                data: {
+                    ...user,
+                    followStats,
+                    userStats: {
+                        runsCount: userFinishedRunsCount,
+                        eventsCount: userFinishedEventsCount
+                    },
+                    banned: isUserBanned
+                }
             })
         } else {
             res.status(404).json({
@@ -207,7 +230,7 @@ class Controller {
         }
     }
 
-    async follow(req: Request<{userId: number}>, res: ResponseHandler<UserFollowResponse, AuthMiddlewareResponse>) {
+    async follow(req: Request<{userId: number}>, res: ResponseHandler<UserFollowResponse, AuthMiddlewareResponse>): Promise<void> {
         const { userId } = req.params
 
         const isUserExists = await UsersService.isUserExistsById(userId)
@@ -234,7 +257,7 @@ class Controller {
         }
     }
 
-    async reportUser(req: Request<{userId: number}, {}, {text: string}>, res: ResponseHandler<UserReportResponse, AuthMiddlewareResponse>) {
+    async reportUser(req: Request<{userId: number}, {}, {text: string}>, res: ResponseHandler<UserReportResponse, AuthMiddlewareResponse>): Promise<void> {
         const {userId} = req.params
 
         const isUserAlreadyReported = await ReportsService.isReportAlreadyExists({authorId: res.locals.user.id, reportedUserId: userId})
@@ -267,7 +290,7 @@ class Controller {
         }
     }
 
-    async getReviewsAboutUser(req: Request<{userId?: number}>, res: ResponseHandler<UserGetReviewsAboutUserResponse, AuthMiddlewareResponse>) {
+    async getReviewsAboutUser(req: Request<{userId?: number}>, res: ResponseHandler<UserGetReviewsAboutUserResponse, AuthMiddlewareResponse>): Promise<void> {
         const {userId} = req.params
         
         let user: User
@@ -299,6 +322,64 @@ class Controller {
         res.json({
             status: "ERROR_OCCURRED",
             data: "Some error has occurred D:"
+        })
+    }
+
+    async ban(req: Request<{userId: string}, {}, {reason?: string}>, res: ResponseHandler<UserBanResponse, AuthMiddlewareResponse>) {
+        const userId = parseInt(req.params.userId)
+
+        const isBanned = await BanService.isUserBanned(userId)
+
+        if(isBanned.banned) {
+            res.status(400).json({
+                status: "BAD_DATA",
+                data: "User already banned"
+            })
+            return
+        }
+
+        const result = await BanService.banUser(userId, req.body.reason)
+
+        if(result) {
+            res.json({
+                status: "SUCCESS",
+                data: "User banned successfully"
+            })
+            return
+        }
+
+        res.status(500).json({
+            status: "ERROR_OCCURRED",
+            data: "Couldnt try to ban a user, sry D:"
+        })
+    }
+
+    async unban(req: Request<{userId: string}>, res: ResponseHandler<UserUnbanResponse, AuthMiddlewareResponse>): Promise<void> {
+        const userId = parseInt(req.params.userId)
+        
+        const isBanned = await BanService.isUserBanned(userId)
+
+        if(!isBanned.banned) {
+            res.status(400).json({
+                status: "BAD_DATA",
+                data: "User already not banned"
+            })
+            return
+        }
+
+        const result = await BanService.unbanUser(userId)
+
+        if(result) {
+            res.json({
+                status: "SUCCESS",
+                data: "User unbanned successfully"
+            })
+            return
+        }
+
+        res.status(500).json({
+            status: "ERROR_OCCURRED",
+            data: "Couldnt try to ban a user, sry D:"
         })
     }
 }

@@ -283,6 +283,14 @@ class Service {
     async updateIsUserInTeam(happeningId: number, userId: number, value: 1 | 0) {
         return await Db.query("UPDATE interested_happenings SET in_team = $1 WHERE user_id = $2 AND happening_id = $3", [value, userId, happeningId])
     }
+
+    async userFinishedRunsCount(userId: number): Promise<number> {
+        return await (await Db.query<{count: number}>("SELECT COUNT(id)::integer as count FROM happenings WHERE type = 'run' AND author_id = $1 AND status = 2", [userId])).rows[0].count
+    }
+
+    async userFinishedEventsCount(userId: number): Promise<number> {
+        return await (await Db.query<{count: number}>("SELECT COUNT(id)::integer as count FROM happenings WHERE type = 'event' AND author_id = $1 AND status = 2", [userId])).rows[0].count
+    }
 }
 
 export const HappeningsService = new Service()

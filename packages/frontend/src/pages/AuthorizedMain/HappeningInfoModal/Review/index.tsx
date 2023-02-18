@@ -1,13 +1,14 @@
 import { Review as ReviewT } from "@app/shared/types/Review.type"
 import { Link } from "react-router-dom"
-import { Avatar } from "../../../../components/Avatar"
 import defaultTee from "../../../../assets/images/default-tee.png"
+import { useEffect, useState } from "react"
+import { timeAgo } from "../../../../utils/timeAgo"
 
 type OwnProps = {
     review: ReviewT
 }
 
-export const Review = ({review: {author, rate, reviewedUser, text}}: OwnProps) => {
+export const Review = ({review: {created_at, author, rate, reviewedUser, text}}: OwnProps) => {
     return (
         <div className=" rounded-[10px] bg-primary-3 pt-2.5 [&:not(:first-child)]:mt-2.5">
            <div className="flex items-center px-2.5">
@@ -19,7 +20,7 @@ export const Review = ({review: {author, rate, reviewedUser, text}}: OwnProps) =
                                 <img className="min-w-7 w-full h-7 [&:not(:first-child)]:-ml-3" src={defaultTee} />
                             ))}
                         </div>
-                        <span className="ml-2 text-[12px]">4 centuries ago</span>
+                        <span className="ml-2 text-[12px]">{timeAgo.format(new Date(created_at))}</span>
                     </div>
                 </div>
            </div>

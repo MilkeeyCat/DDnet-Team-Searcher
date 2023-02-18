@@ -13,6 +13,8 @@ import {
     UserReportResponse,
     UserEventsResponse,
     UserGetReviewsAboutUserResponse,
+    UserBanResponse,
+    UserUnbanResponse,
 } from '@app/shared/types/api/users.types'
 
 export const usersApi = createApi({
@@ -22,7 +24,6 @@ export const usersApi = createApi({
         credentials: 'include',
     }),
     endpoints: (build) => ({
-        //TODO: write a type for response
         registerUser: build.mutation<RegistrationResponse, RegistrationRequest>(
             {
                 query: (body) => ({
@@ -52,9 +53,8 @@ export const usersApi = createApi({
                         dispatch(setUserData(data.data))
                         dispatch(setIsAuthed(true))
                     }
-                } catch (e: any) {
-                    //TODO: do something with this fucking ANY
-                    // user is not authed ¯\_(ツ)_/¯
+                } catch (e) {
+                    console.log(e)
                 }
             },
         }),
@@ -92,19 +92,35 @@ export const usersApi = createApi({
                 url: `user/${userId}/follow`,
                 method: 'PUT',
             }),
+            transformErrorResponse: (res) => res.data
         }),
         reportUser: build.mutation<UserReportResponse, {userId: number, text: string}>({
-            query: (body) => ({
-                url: `user/${body.userId}/report`,
+            query: ({userId, text}) => ({
+                url: `user/${userId}/report`,
                 method: "POST",
-                body: {text: body.text}
+                body: {text}
             }),
             transformErrorResponse: (res) => res.data
         }),
         getReviewsAboutUser: build.query<UserGetReviewsAboutUserResponse['data'], number>({
             query: (userId) => `/user/${userId}/reviews`,
             transformResponse: (res: UserGetReviewsAboutUserResponse) => res.data
-        })
+        }),
+        banUser: build.mutation<UserBanResponse, {userId: number, reason: string | null}>({
+            query: ({userId, reason}) => ({
+                url: `/user/${userId}/ban`,
+                method: "POST",
+                body: {reason}
+            }),
+            transformErrorResponse: (res) => res.data
+        }),
+        unbanUser:  build.mutation<UserUnbanResponse, number>({
+            query: (userId) => ({
+                url: `/user/${userId}/unban`,
+                method: "POST",
+            }),
+            transformErrorResponse: (res) => res.data
+        }),
     }),
 })
 
@@ -118,5 +134,7 @@ export const {
     useGetUserRolesQuery,
     useFollowUserMutation,
     useReportUserMutation,
-    useGetReviewsAboutUserQuery
+    useGetReviewsAboutUserQuery,
+    useBanUserMutation,
+    useUnbanUserMutation
 } = usersApi

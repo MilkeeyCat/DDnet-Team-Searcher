@@ -15,8 +15,7 @@ import classNames from "classnames"
 
 import defaultTee from "../../assets/images/voxel.png"
 import {useAppDispatch} from "../../utils/hooks/hooks"
-// import {register} from "../../store/thunks/app"
-import {addHint} from "../../store/slices/hints"
+import { hint } from "../../store/slices/hints"
 import { useRegisterUserMutation } from "../../api/users-api"
 import { RegistrationForm } from "../../types/RegistrationForm.type"
 
@@ -84,7 +83,7 @@ export const Register = () => {
                 setFieldError(error.field, error.text)
             } else {
                 setCurrentStep(1)
-                dispatch(addHint({type: "error", text: error}))
+                dispatch(hint({type: "error", text: error}))
             }
         }
     }

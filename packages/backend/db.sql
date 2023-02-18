@@ -1,4 +1,3 @@
--- Users Table
 CREATE TABLE users (
     id BIGSERIAL PRIMARY KEY,
     username VARCHAR(255) NOT NULL UNIQUE,
@@ -11,7 +10,6 @@ CREATE TABLE users (
     verified SMALLINT NOT NULL DEFAULT 0 -- 0 or 1
 );
 
--- Roles Table
 CREATE TABLE roles (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -33,7 +31,6 @@ CREATE TABLE servers (
     port INT NOT NULL
 );
 
--- Users Roles
 CREATE TABLE users_roles (
     user_id BIGINT,
     role_id INT,
@@ -75,7 +72,6 @@ CREATE TABLE happenings (
         ON DELETE SET NULL
 );
 
--- Table to indicate interested players =]
 CREATE TABLE interested_happenings (
     id BIGSERIAL PRIMARY KEY,
     user_id INT NOT NULL,
@@ -121,7 +117,7 @@ CREATE TABLE followers (
         ON DELETE CASCADE
 );
 
-CREATE TABLE reports(
+CREATE TABLE reports (
     id BIGSERIAL PRIMARY KEY,
     author_id INT NOT NULL,
     reported_user_id INT NOT NULL,
@@ -130,6 +126,16 @@ CREATE TABLE reports(
         REFERENCES users(id)
         ON DELETE CASCADE,
     FOREIGN KEY(reported_user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE banned_list (
+    id BIGSERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    reason VARCHAR(255) DEFAULT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(user_id)
         REFERENCES users(id)
         ON DELETE CASCADE
 );

@@ -12,6 +12,7 @@ import { bodyValidatorMiddleware } from '../middlewares/bodyValidator.middleware
 import { runSchema } from '../validationSchemas/run.schema.js'
 import { checkSchema, validationResult } from 'express-validator'
 import { eventSchema } from '../validationSchemas/event.schema.js'
+import { banMiddleware } from '../middlewares/ban.middleware.js'
 
 // NOTE: If you will try to send custom request to create an event be sure you are sending a file last field either it wont work (It's not my fault, I swear)
 const allowedExtensions = ['jpeg', 'jpg', 'png', 'webp']
@@ -155,6 +156,7 @@ Router.delete(
 Router.put(
     '/happenings/:happeningId/interested',
     authMiddleware,
+    banMiddleware,
     paramsValidatorMiddleware(idSchema, ['happeningId']),
     HappeningsController.setIsInterested as any
 )

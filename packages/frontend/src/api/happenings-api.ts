@@ -85,6 +85,7 @@ export const happeningsApi = createApi({
                 url: `${id}/interested`,
                 method: 'PUT',
             }),
+            transformErrorResponse: (res) => res.data
         }),
         getInterestedPlayers: build.query<InterestedPlayersResponse, number>({
             query: (id) => ({

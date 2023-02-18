@@ -1,4 +1,5 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit"
+import { AppDispatch } from "../..";
 
 interface Hint {
     type: "error" | "success";
@@ -18,21 +19,24 @@ export const hintsSlice = createSlice({
     initialState,
     reducers: {
         addHint(state, action: PayloadAction<Hint>) {
-            const length = state.hints.length
-
             state.hints.push(action.payload)
-
-            setTimeout(() => {
-                state.hints.splice(length, 1)
-            }, 500)
+        },
+        removeHint(state) {
+            state.hints.splice(state.hints.length-1, 1)
         }
     }
 })
 
-//action creators
-export const {addHint} = hintsSlice.actions
-//@ts-ignore
-window.addHint = addHint;
+const {addHint, removeHint} = hintsSlice.actions
 
+export const hint = ({type, text}: Hint) => {
+    return async (dispatch: AppDispatch) => {
+        dispatch(addHint({type, text}))
+
+        setTimeout(()=>{
+            dispatch(removeHint())
+        }, 5000)
+    }
+}
 
 export default hintsSlice.reducer

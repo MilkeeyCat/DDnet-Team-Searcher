@@ -4,7 +4,7 @@ import { useCreateEventMutation, useCreateRunMutation } from "../../../api/happe
 import { Button } from "../../../components/ui/Button"
 import { Modal } from "../../../components/ui/Modal"
 import { setIsCreateEventModalHidden, setIsCreateRunModalHidden } from "../../../store/slices/app"
-import { addHint } from "../../../store/slices/hints"
+import { hint } from "../../../store/slices/hints"
 import { CreateEventForm } from "../../../types/CreateEventForm.type"
 import { CreateRunForm } from "../../../types/CreateRunForm.type"
 import { composeValidators } from "../../../utils/composeValidators"
@@ -102,14 +102,14 @@ export const CreateHappeningModal = ({type, isVisible, onClose}: OwnProps) => {
             resetForm()
             
             if(typeof res.data === "string") {
-                dispatch(addHint({type: "success", text: res.data}))
+                dispatch(hint({type: "success", text: res.data}))
             } else {
                 // idk what to do here xD
             }
         } catch (err: any) {
             if("data" in err) {
                 if(typeof err.data === "string") {
-                    dispatch(addHint({type: "error", text: err.data}))
+                    dispatch(hint({type: "error", text: err.data}))
                 } else {
                     // show an error above fields
                 }

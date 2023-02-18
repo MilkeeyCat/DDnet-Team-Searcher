@@ -1,21 +1,20 @@
 import loginPageBackground from "../../assets/images/login-page-background.png"
-import {Field, Form, Formik, FormikHelpers} from "formik"
-import {Input} from "../../components/Input"
-import {Button} from "../../components/ui/Button"
-import {Link} from "react-router-dom"
-import {Checkbox} from "../../components/Checkbox"
-import {useNavigate} from "react-router-dom"
-import {useAppDispatch} from "../../utils/hooks/hooks"
-import {composeValidators} from "../../utils/composeValidators"
-import {required} from "../../utils/validators/required"
-import {maxLength} from "../../utils/validators/maxLength"
-import {addHint} from "../../store/slices/hints"
+import { Field, Form, Formik, FormikHelpers } from "formik"
+import { Input } from "../../components/Input"
+import { Button } from "../../components/ui/Button"
+import { Link } from "react-router-dom"
+import { Checkbox } from "../../components/Checkbox"
+import { useNavigate } from "react-router-dom"
+import { useAppDispatch } from "../../utils/hooks/hooks"
+import { composeValidators } from "../../utils/composeValidators"
+import { required } from "../../utils/validators/required"
+import { maxLength } from "../../utils/validators/maxLength"
+import { hint } from "../../store/slices/hints"
 import { LoginForm } from "../../types/LoginForm.type"
 import { useLoginUserMutation } from "../../api/users-api"
 import { setIsAuthed } from "../../store/slices/app"
-
-import "./styles.scss"
 import { LoginResponse } from "@app/shared/types/api/users.types"
+import "./styles.scss"
 
 export const Login = () => {
     const [ loginUser ] = useLoginUserMutation()
@@ -55,7 +54,7 @@ export const Login = () => {
             if(typeof error === "object") {
                 setFieldError(error.field, error.text)
             } else {
-                dispatch(addHint({type: "error", text: error || ""}))
+                dispatch(hint({type: "error", text: error || ""}))
             }            
         }      
     }
