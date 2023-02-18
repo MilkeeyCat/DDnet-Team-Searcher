@@ -11,7 +11,6 @@ import {Avatar} from "../Avatar"
 import {useRef, useState} from "react"
 import {setIsCreateEventModalHidden, setIsCreateRunModalHidden} from "../../store/slices/app"
 import { useOutsideClickHandler } from "../../utils/hooks/useClickedOutside"
-import "./styles.scss"
 
 export const Header = () => {
     const dispatch = useAppDispatch()
@@ -38,27 +37,26 @@ export const Header = () => {
 
 
     return (
-        <header className={classNames("header", {"login-register": !isAuthed})}>
-            <div className={"inner"}>
+        <header className={classNames("py-5 w-full z-[1] bg-[rgba(0,0,0,.36)]", {"absolute t-0": !isAuthed})}>
+            <div className="flex justify-between items-end max-w-[1110px] mx-auto">
                 <Link to={"/"}>
                     <img src={logo} alt="logotype" className={classNames({"hidden": !isAuthed})}/>
                 </Link>
-                <div className={classNames({"hidden": isAuthed, "header__right header__buttons": !isAuthed})}>
-                    <Button styleType={"bordered"}><Link to={"/register"}><img src={signUpIcon} alt="sign up icon"/> Sign up</Link></Button>
-                    <Button styleType={"filled"}><Link to={"/login"}><img src={loginIcon} alt="login icon"/> Log in</Link></Button>
+                <div className={classNames({"hidden": isAuthed, "flex items-center [&>:not(:first-child)]:ml-7": !isAuthed})}>
+                    <Button styleType={"bordered"}><Link to={"/register"}><img src={signUpIcon} className="inline-block" alt="sign up icon"/> Sign up</Link></Button>
+                    <Button styleType={"filled"}><Link to={"/login"}><img src={loginIcon} className="inline-block" alt="login icon"/> Log in</Link></Button>
                 </div>
                 <div
-                    className={classNames({"header__right": isAuthed, "hidden": !isAuthed})}> {/* authed user part */}
-                    <div className={"header__create-selection-menu-wrapper"}>
-                        <Button styleType={isCreateSelectionMenuHidden ? "bordered" : "filled"} className={"header__create-btn"} onClick={() => setIsSelectionMenuHidden(!isCreateSelectionMenuHidden)}><img src={addIcon}/></Button>
-                        <div ref={ref} className={classNames("header__create-selection-menu", {"hidden": isCreateSelectionMenuHidden})}>
-                            <div className={"header__create-selection-menu-item"} onClick={createEvent}>Create event</div>
-                            <div className={"header__create-selection-menu-item"} onClick={createRun}>Create run</div>
+                    className={classNames({"flex items-center": isAuthed, "hidden": !isAuthed})}> {/* authed user part */}
+                    <div className="relative">
+                        <Button styleType={isCreateSelectionMenuHidden ? "bordered" : "filled"} className={"p-1"} onClick={() => setIsSelectionMenuHidden(!isCreateSelectionMenuHidden)}><img className="!m-0" src={addIcon}/></Button>
+                        <div ref={ref} data-id="header" className={classNames("absolute l-0 min-w-[max(100%,200px)] bg-primary-2 top-[125%] rounded-[10px]", {"hidden": isCreateSelectionMenuHidden})}>
+                            <div className="text-[white] px-4 py-2.5 rounded-[10px] transition-all duration-200 cursor-pointer hover:bg-primary-3" onClick={createEvent}>Create event</div>
+                            <div className="text-[white] px-4 py-2.5 rounded-[10px] transition-all duration-200 cursor-pointer hover:bg-primary-3" onClick={createRun}>Create run</div>
                         </div>
                     </div>
-                    <Button style={{"border": "0"}} className={"header__notification"} styleType={"bordered"}><img
-                        src={notification}/></Button>
-                    <p className={"header__username"}>{username}</p>
+                    <Button style={{"border": "0"}} className="!p-0 max-w-[25px] w-full ml-5" styleType={"bordered"}><img src={notification}/></Button>
+                    <p className="text-[white] mx-5">{username}</p>
                     <Avatar src={avatar} username={username || ""} size={30}/>
                 </div>
             </div>
