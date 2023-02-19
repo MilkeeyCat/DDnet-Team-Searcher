@@ -17,8 +17,6 @@ import { RegistrationForm } from "../../types/RegistrationForm.type"
 
 export const Register = () => {
     const [registerUser, registerUserResult] = useRegisterUserMutation()
-
-
     const [userEmail, setUserEmail] = useState<null | string>(null)
     const [currentStep, setCurrentStep] = useState(1)
     const [currentTierId, setCurrentTierId] = useState(0)

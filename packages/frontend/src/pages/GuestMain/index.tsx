@@ -1,4 +1,3 @@
-import ddnetGameplay from "../../assets/images/ddnet-gameplay.png"
 import {AboutUsItem} from "./AboutUsItem"
 import defaultTee from "../../assets/images/default-tee.png"
 import arrowDown from "../../assets/images/arrow-down.png"
@@ -63,7 +62,7 @@ export const GuestMain = () => {
 
     return (
         <>
-            <div className={`bg-[url("${ddnetGameplay}")]`}>
+            <div className="bg-[url('/src/assets/images/ddnet-gameplay.png')]">
                 <div className="h-[1166px] pt-[170px] flex max-w-fit mx-auto px-10 xl:m-0 flex-col xl:pl-[400px] text-[white]">
                     <h1 className="m-0 text-3xl md:text-6xl font-bold">DDrace Team<br/> Searcher<span className="text-primary-1">.</span></h1>
                     <h2 className="m-0 mt-2.5 text:xl md:text-3xl font-medium">Find your dream team</h2>
@@ -79,7 +78,7 @@ export const GuestMain = () => {
                             <p className="mt-2.5">TEAMS NEED YOU</p>
                         </div>
                     </div>
-                    <Button styleType={"bordered"} className="mt-10 max-w-fit text-sm sm:text-base !bg-[rgba(38,34,29,.8)]"><img src={arrowDown} alt="arrow down"/>What's
+                    <Button styleType={"bordered"} className="mt-10 max-w-fit text-sm sm:text-base !bg-[rgba(38,34,29,.8)]"><img src={arrowDown} className="mr-2" alt="arrow down"/>What's
                         DDrace Team Searcher?</Button>
                 </div>
             </div>

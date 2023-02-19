@@ -13,32 +13,10 @@ img {
     max-width: 100%;
 }
 
-.hidden {
-    display: none;
-}
-
-.op0 {
-    opacity: 0;
-}
-
-.row {
-    display: flex;
-}
-
-.jc-sb {
-    justify-content: space-between;
-}
-
-.selected-text {
-    color: $app_color;
-}
-
 #root {
     background: $app_background;
     min-height: 100vh;
     overflow: auto;
-
-
     display: flex;
     flex-direction: column;
 }

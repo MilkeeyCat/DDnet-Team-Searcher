@@ -1,5 +1,7 @@
 import { CSSProperties } from "react"
 
+// no clue wtf is this xD
+
 interface OwnProps {
     style: CSSProperties
 }
