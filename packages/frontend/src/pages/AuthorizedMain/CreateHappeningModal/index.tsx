@@ -129,17 +129,17 @@ export const CreateHappeningModal = ({type, isVisible, onClose}: OwnProps) => {
                     <div className="px-6">
                         <div>
                             <p className="text-xl mt-5" style={{"margin": "40px 0 0"}}>Where's your {type}?</p>
-                            <p className={"text-sm mt-1 opacity-[.87]"}>So noone gets lost on where to go?</p>
+                            <p className={"text-sm mt-1 text-high-emphasis"}>So noone gets lost on where to go?</p>
                             <Field component={RadioInput} value={0} name={"place"} id={"own"}
                                    title={"Our own servers."}
-                                   subtitle={"You will have less change to get ddosed."}/>
+                                   subtitle={"You will have less change to get ddosed."} className={{wrapper: "mt-5"}}/>
                             <Field component={RadioInput} value={1} name={"place"} id={"others"}
                                    title={"Somewhere else."}
-                                   subtitle={"You can get team and go play on official DDnet servers."}/>
+                                   subtitle={"You can get team and go play on official DDnet servers."} className={{wrapper: "mt-5"}}/>
                         </div>
                         <div>
                             <p className={"text-xl mt-5"}>Tell us more about your {type}</p>
-                            <p className={"text-sm mt-1 opacity-[.87]"}>Fill fields down below!</p>
+                            <p className={"text-sm mt-1 text-high-emphasis"}>Fill fields down below!</p>
                             <div className="flex justify-between mt-4">
                                 <Field className="max-w-[256px] w-full" name="mapName" label="map name" datalist={availableMaps.map(map => map.name)}
                                        id="mapName" placeholder={"Map you're gonna play?"} required component={InputWithLabel}/>

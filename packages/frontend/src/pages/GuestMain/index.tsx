@@ -63,7 +63,7 @@ export const GuestMain = () => {
     return (
         <>
             <div className="bg-[url('/src/assets/images/ddnet-gameplay.png')]">
-                <div className="h-[1166px] pt-[170px] flex max-w-fit mx-auto px-10 xl:m-0 flex-col xl:pl-[400px] text-[white]">
+                <div className="h-[1166px] pt-[170px] flex max-w-fit mx-auto px-10 xl:m-0 flex-col xl:pl-[400px] text-high-emphasis">
                     <h1 className="m-0 text-3xl md:text-6xl font-bold">DDrace Team<br/> Searcher<span className="text-primary-1">.</span></h1>
                     <h2 className="m-0 mt-2.5 text:xl md:text-3xl font-medium">Find your dream team</h2>
                     <p className="m-0 mt-6 max-w-[540px]">I hope one day I will finish this website and you will be able to find people to play with (or
@@ -83,14 +83,14 @@ export const GuestMain = () => {
                 </div>
             </div>
             <div className="max-w-[840px] mx-auto px-10 -mt-[200px]">
-                <p className="text-3xl font-medium text-[white]">Some useless info about DDrace Team Searcher.:</p>
+                <p className="text-3xl font-medium text-high-emphasis">Some useless info about DDrace Team Searcher.:</p>
                 <div className="flex flex-wrap justify-around">
                     {aboutUsFax.map(text => (
                         <AboutUsItem imageUrl={defaultTee} text={text}/>
                     ))}
                 </div>
             </div>
-            <div className="mt-[150px] text-[white]">
+            <div className="mt-[150px] text-high-emphasis">
                 <p className="text-3xl font-medium text-center">What homies are saying 'bout us:</p>
                 <Carousel className="max-w-[800px] mt-16 mx-auto" infiniteLoop showStatus={false} showThumbs={false} showIndicators={false}
                         autoPlay
@@ -112,17 +112,17 @@ export const GuestMain = () => {
                 </Carousel>
             </div>
             <div className="my-[150px]">
-                <p className="font-medium text-3xl text-[white] text-center">Last news</p>
+                <p className="font-medium text-3xl text-high-emphasis text-center">Last news</p>
                 <div className="flex justify-center flex-wrap">
                     {posts.map((post, id) => (
                         <div key={id} className="max-w-[340px] basis-[260px] grow-[1] mx-5 bg-primary-2 rounded-[20px] my-5">
                             <img className="rounded-t-[20px] max-h-[150px] h-full max-w-full w-full" src={test}/>
                             <div className="pt-2.5 pb-8 px-5">
-                                <span className="text-[white] m-0">{post.pubDate}</span>
-                                <p className="text-[white] m-0 font-medium mt-5">{post.title}</p>
-                                <p className={"text-[white] m-0 mt-4"}>{post.textPreview}</p>
+                                <span className="text-medium-emphasis m-0">{post.pubDate}</span>
+                                <p className="text-high-emphasis m-0 font-medium mt-5">{post.title}</p>
+                                <p className={"text-medium-emphasis m-0 mt-4"}>{post.textPreview}</p>
                                 <div className="mt-7 flex justify-between">
-                                    <span className="text-[white] font-medium m-0">{post.author}</span>
+                                    <span className="text-high-emphasis font-medium m-0">{post.author}</span>
                                     <button className="text-primary-1 flex items-center">More <img src={moreIcon} className="ml-2.5" alt="arrow left icon"/></button>
                                 </div>
                             </div>

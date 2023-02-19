@@ -83,12 +83,12 @@ export const Profile = () => {
 
     return (
         <>
-            { isError && <p className="text-center text-[white] text-[5rem]">User not found :&lt;</p>}
+            { isError && <p className="text-center text-high-emphasis text-[5rem]">User not found :&lt;</p>}
             { isSuccess &&
                 <div className="mt-[85px] max-w-[1110px] mx-auto">
                     <div className="flex justify-center">
                         <Avatar size={285} src={null} username={user?.username || ""} />
-                        <div className="text-[white] ml-[65px]">
+                        <div className="text-high-emphasis ml-[65px]">
                             <p className="text-2xl mt-9">{user?.username} {user?.verified === 1 && <VerifiedIcon className="inline-block" color="blue"/>}</p>
                                 <div className="flex flex-wrap">
                                     {roles && roles.map(role => (
@@ -118,21 +118,21 @@ export const Profile = () => {
                     <ReportModal cb={refetch} onClose={()=>setIsReportModalVisible(false)} isVisible={isReportModalVisible} userId={user.id} username={user.username}/>
                     <BanModal cb={refetch} onClose={()=>setIsBanModalVisible(false)} isVisible={isBanModalVisible} userId={user.id} username={user.username}/>
                     <ul className="flex justify-between mt-[100px]">
-                        <li className="max-w-[30%] border-[1px] border-primary-1 bg-primary-2 transition-colors hover:bg-primary-3 rounded-[20px] text-[white] text-center w-full py-9 px-[85px]">
+                        <li className="max-w-[30%] border-[1px] border-primary-1 bg-primary-2 transition-colors hover:bg-primary-3 rounded-[20px] text-high-emphasis text-center w-full py-9 px-[85px]">
                             <p className="text-2xl">{favoriteServer || "Coudn't find fav server"}</p>
                             <p className="opacity-[.87]">most played server</p>
                         </li>
-                        <li className="max-w-[30%] border-[1px] border-primary-1 bg-primary-2 transition-colors hover:bg-primary-3 rounded-[20px] text-[white] text-center w-full py-9 px-[85px]">
+                        <li className="max-w-[30%] border-[1px] border-primary-1 bg-primary-2 transition-colors hover:bg-primary-3 rounded-[20px] text-high-emphasis text-center w-full py-9 px-[85px]">
                             <p className="text-2xl">{user.userStats?.eventsCount}</p>
                             <p className="opacity-[.87]">events hosted</p>
                         </li>
-                        <li className="max-w-[30%] border-[1px] border-primary-1 bg-primary-2 transition-colors hover:bg-primary-3 rounded-[20px] text-[white] text-center w-full py-9 px-[85px]">
+                        <li className="max-w-[30%] border-[1px] border-primary-1 bg-primary-2 transition-colors hover:bg-primary-3 rounded-[20px] text-high-emphasis text-center w-full py-9 px-[85px]">
                             <p className="text-2xl">{user.userStats?.runsCount}</p>
                             <p className="opacity-[.87]">runs finished</p>
                         </li>
                     </ul>
                     <section className="mt-[60px]">
-                        <h2 className="text-3xl text-[white] text-center">{user.username}'s last events</h2>
+                        <h2 className="text-3xl text-high-emphasis text-center">{user.username}'s last events</h2>
                         <div className="w-full flex justify-around flex-wrap">
                             {areEventsLoaded && events?.map(event => (
                                 <Event className="mt-5" onClick={()=>{}} event={event} />
@@ -140,7 +140,7 @@ export const Profile = () => {
                         </div>
                     </section>
                     <section className="mt-[60px]">
-                        <h2 className="text-3xl text-[white] text-center">{user.username}'s last runs</h2>
+                        <h2 className="text-3xl text-high-emphasis text-center">{user.username}'s last runs</h2>
                         <div className="max-w-[80%] w-full mx-auto flex flex-wrap justify-around">
                             {areRunsLoaded && runs?.data?.map(run => (
                                 <Run className="mt-5" onClick={()=>{}} run={run} />
@@ -151,7 +151,7 @@ export const Profile = () => {
                         <Graph username={user?.username || ""}/>
                     </section>
                     <section className="mt-[60px] mb-[200px]">
-                        <h2 className="text-3xl text-[white] text-center">What people say about {user.username}</h2>
+                        <h2 className="text-3xl text-high-emphasis text-center">What people say about {user.username}</h2>
                         <div>
                             {areReviewsLoaded && typeof reviews != "string" && reviews?.map(({text, rate, created_at, author: {avatar, username}}) => (
                                 <div className="flex mt-12 max-w-[600px] w-full mx-auto">
@@ -159,16 +159,16 @@ export const Profile = () => {
                                         <Avatar size={50} username={username} src={avatar}/>
                                     </div>
                                     <div className="ml-1">
-                                        <p className="font-semibold text-[white]">{username}</p>
+                                        <p className="font-semibold text-high-emphasis">{username}</p>
                                         <div className="flex items-center">
                                             <div className="flex -ml-1">
                                                 {rate && new Array(rate).fill(rate).map(_ => (
                                                     <img className="max-w-7 h-7 [&:not(:first-child)]:-ml-3" src={defaultTee} />
                                                 ))}
                                             </div>
-                                            <span className="text-xs text-[white] opacity-60 ml-1">{timeAgo.format(new Date(created_at))}</span>
+                                            <span className="text-xs text-medium-emphasis ml-1">{timeAgo.format(new Date(created_at))}</span>
                                         </div>
-                                        <p className="text-[white] mt-2.5">{text}</p>
+                                        <p className="text-high-emphasis mt-2.5">{text}</p>
                                     </div>
                                 </div>
                             ))}

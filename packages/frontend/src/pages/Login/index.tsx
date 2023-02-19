@@ -61,7 +61,7 @@ export const Login = () => {
         <>
             <div className={`bg-[url("/src/assets/images/login-page-background.png")] mb-[150px] h-[1093px]`}>
                 <div className="pt-[120px] w-fit mx-auto">
-                    <p className="text-[white] text-[40px]">Login in your account<br/> and <span
+                    <p className="text-high-emphasis text-[40px]">Login in your account<br/> and <span
                         className={"selected-text"}>something</span> will happen.</p>
                     <Formik initialValues={initialValues} validate={validation} onSubmit={onSubmit}>
                         <Form>
@@ -69,11 +69,11 @@ export const Login = () => {
                                 <Field autoComplete={"off"} name={"username"} placeholder={"Username"} component={Input}/>
                                 <Field autoComplete={"off"} name={"password"} placeholder={"Password"} type={"password"} component={Input}/>
                             </div>
-                            <div className="mt-2.5 text-[white]">
+                            <div className="mt-2.5 text-high-emphasis">
                                 <Field name={"rememberMe"} as={Checkbox}/>
                                 <span className="ml-2.5">Remember me</span>
                             </div>
-                            <Link to={"/forgor-password"} onClick={()=>alert("Sucks to be you!")} className="mt-2.5 text-[white] block">Forgor password?</Link>
+                            <Link to={"/forgor-password"} onClick={()=>alert("Sucks to be you!")} className="mt-2.5 text-high-emphasis block">Forgor password?</Link>
                             <Button type={"submit"} styleType={"filled"} className="mt-[35px]">Login</Button>
                         </Form>
                     </Formik>

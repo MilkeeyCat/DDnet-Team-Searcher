@@ -94,9 +94,9 @@ export const HappeningInfoModal: React.FC<OwnProps> = ({type, happeningId, onClo
                 <div className="transition-all duration-500 max-w-full w-full shrink-0 relative" style={{right: `${slideNum * 100}%`}}>
                     <EventStartTime startAt={happening.start_at} status={happening.status}/>
                     <p className="text-2xl font-semibold mt-4">{happening.map_name}</p>
-                    <p className="text-[rgba(255,255,255,.6)]">{happening.description}</p>
+                    <p className="text-medium-emphasis">{happening.description}</p>
                     <EventPlace place={happening.place}/>
-                    <div className="text-[rgba(255,255,255,.6)] flex mt-2.5 items-center">
+                    <div className="text-medium-emphasis flex mt-2.5 items-center">
                         <Avatar src={null} username={happening.username}/>
                         <span className="ml-2.5">Created by {happening.username}</span></div>
                 </div>

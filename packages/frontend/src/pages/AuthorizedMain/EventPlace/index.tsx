@@ -9,7 +9,7 @@ export const EventPlace:React.FC<OwnProps> = ({place}) => {
     return (
         <div className="flex items-center font-semibold mt-2.5">
             <img src={placeIcon}/>
-            <span className="ml-2.5 text-[white] text-[12px]">{place == 1 ? "Other place" : "Our servers"}</span>
+            <span className="ml-2.5 text-medium-emphasis text-[12px]">{place == 1 ? "Other place" : "Our servers"}</span>
         </div>
     )
 }

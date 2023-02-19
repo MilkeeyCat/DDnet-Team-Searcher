@@ -86,7 +86,7 @@ export const Register = () => {
         <>
             <div className={`mb-[150px] bg-[url("/src/assets/images/register-page-background.png")] h-[1028px]`}>
                 <div className={"pt-[120px] max-w-fit mx-auto"}>
-                    <p className={classNames("text-4xl text-[white]", {"hidden": currentStep === 3})}>Create your account<br/> and become the part of
+                    <p className={classNames("text-4xl text-high-emphasis", {"hidden": currentStep === 3})}>Create your account<br/> and become the part of
                         the <s className="text-primary-1">community.</s></p>
                     <Formik initialValues={initialValues} validateOnBlur={true} validate={validation}
                             onSubmit={onSubmit}>
@@ -117,7 +117,7 @@ export const Register = () => {
                                 <div style={{transform: `translateX(-${(currentStep-1)*100}%)`}}> {/* Second Step */}
                                     <div className={"max-w-[600px] mx-auto"}>
                                         <div className={"tier-selection"}>
-                                            <p className={"font-medium text-3xl mb-[70px] text-[white] text-center"}>Select a tier you think in:</p>
+                                            <p className={"font-medium text-3xl mb-[70px] text-high-emphasis text-center"}>Select a tier you think in:</p>
                                             <div className={"relative max-w-[560px] mx-auto flex flex-col"}>
                                                 <Field onInput={(e: KeyboardEvent) => {
                                                     let target = e.target
@@ -141,13 +141,13 @@ export const Register = () => {
                                                  <div className="flex w-full justify-between mt-1">
                                                     {tiers.map((thing, id) => (
                                                         <div className="flex flex-col items-center">
-                                                            <p className={classNames("text-[white] text-[12px]", {"text-primary-1": currentTierId == id})}>{thing[1]}</p>
+                                                            <p className={classNames("text-low-emphasis text-[12px]", {"text-primary-1": currentTierId == id})}>{thing[1]}</p>
                                                             <img src={thing[0]} alt="xD" />
                                                         </div>
                                                     ))}
                                                 </div>
                                             </div>
-                                            <div className={"pt-[30px] text-[white]"}>
+                                            <div className={"pt-[30px] text-high-emphasis"}>
                                                 <p>Short description of {tiers[currentTierId][1]}:</p>
                                                 <p className={classNames({"hidden": currentTierId != 0})}>Lorem ipsum
                                                     dolor
@@ -264,7 +264,7 @@ export const Register = () => {
                                     </div>
                                 </div>
                                 <div style={{transform: `translateX(-${(currentStep-1)*100}%)`}}>
-                                    <div className="text-[white] p-10 bg-[#24201A] rounded-[20px] mt-[200px]">
+                                    <div className="text-high-emphasis p-10 bg-[#24201A] rounded-[20px] mt-[200px]">
                                         <div className="flex items-center">
                                             <div>
                                                 <p className="text-3xl font-medium">Your account successfully

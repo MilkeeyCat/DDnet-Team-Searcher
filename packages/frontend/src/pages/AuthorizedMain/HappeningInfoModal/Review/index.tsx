@@ -1,7 +1,6 @@
 import { Review as ReviewT } from "@app/shared/types/Review.type"
 import { Link } from "react-router-dom"
 import defaultTee from "../../../../assets/images/default-tee.png"
-import { useEffect, useState } from "react"
 import { timeAgo } from "../../../../utils/timeAgo"
 
 type OwnProps = {

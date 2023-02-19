@@ -129,22 +129,22 @@ export const Event: React.FC<OwnProps> = ({className, onClick, event}) => {
     const thumbnailUrl = thumbnail ? `http://localhost:8080/public/${thumbnail}` : `https://ddnet.org/ranks/maps/${map_name.replaceAll(" ", "_")}.png`
 
     return (
-        <div className={classNames("max-w-[530px] w-full bg-primary-2 rounded-[10px] flex flex-col", {[className || ""]: !!className})}>
+        <div className={classNames("max-w-[530px] w-full bg-primary-2 rounded-[10px] flex flex-col hover:scale-[1.01] transition-all duration-150", {[className || ""]: !!className})}>
             <div className="p-2.5 grow-[1] flex flex-col">
                 <div className="flex justify-between">
                     <EventStartTime startAt={start_at} status={status}/>
                     <Link to={`/profile/${event.author_id}`} className="ml-auto">
                         <Avatar src={null} username={username}/>
                     </Link>
-                    <div className="bg-primary-3 text-[white] px-[7px] py-[3px] rounded-full flex items-center ml-2.5">
+                    <div className="bg-primary-3 text-high-emphasis px-[7px] py-[3px] rounded-full flex items-center ml-2.5">
                         <img src={peopleIcon}/>
                         <span className="text-[12px] ml-1">{interested}</span>
                     </div>
                 </div>
                 <div className="flex justify-between mt-5">
                     <div>
-                        <p className="text-[white] font-semibold cursor-pointer" onClick={onClick}>{map_name}</p>
-                        <p className="mt-1 text-[white]">{description}</p>
+                        <p className="text-high-emphasis font-semibold cursor-pointer" onClick={onClick}>{map_name}</p>
+                        <p className="mt-1 text-medium-emphasis">{description}</p>
                     </div>
                     <img src={thumbnailUrl} className="max-w-[220px] w-full max-h-[95px] rounded-[10px] object-cover" alt="map thumbnail"/>
                 </div>
@@ -153,15 +153,15 @@ export const Event: React.FC<OwnProps> = ({className, onClick, event}) => {
                     <EventPlace place={place}/>
                     <div className="flex">
                         <div className="relative">
-                            <button className="text-[white] flex" onClick={() => setIsShowMorePanelHidden(!isShowMorePanelHidden)}>...</button>
+                            <button className="text-high-emphasis flex" onClick={() => setIsShowMorePanelHidden(!isShowMorePanelHidden)}>...</button>
                             <div data-hidden={isShowMorePanelHidden} ref={ref} className={classNames({"absolute min-w-[200px] l-2.5 bg-[#15120D] flex flex-col rounded-[10px]": !isShowMorePanelHidden}, {"hidden": isShowMorePanelHidden})}>
-                                {isOwner && status == 0 && <button className="text-[white] py-2.5 px-4 rounded-[10px] transition-all duration-200 cursor-pointer text-left hover:bg-primary-1" onClick={startEventCb(id)}>Start Event</button>}
-                                {isOwner && <button className="text-[white] py-2.5 px-4 rounded-[10px] transition-all duration-200 cursor-pointer text-left hover:bg-primary-1" onClick={editEventCb}>Edit Event</button>}
-                                {isOwner && status == 1 && <button className={"text-[white] py-2.5 px-4 rounded-[10px] transition-all duration-200 cursor-pointer text-left hover:bg-error"} onClick={endEventCb(id)}>End Event</button>}
-                                {isOwner && status != 1 && <button className={"text-[white] py-2.5 px-4 rounded-[10px] transition-all duration-200 cursor-pointer text-left hover:bg-error"} onClick={deleteEventCb(id)}>Delete Event</button>}
+                                {isOwner && status == 0 && <button className="text-high-emphasis py-2.5 px-4 rounded-[10px] transition-all duration-200 cursor-pointer text-left hover:bg-primary-1" onClick={startEventCb(id)}>Start Event</button>}
+                                {isOwner && <button className="text-high-emphasis py-2.5 px-4 rounded-[10px] transition-all duration-200 cursor-pointer text-left hover:bg-primary-1" onClick={editEventCb}>Edit Event</button>}
+                                {isOwner && status == 1 && <button className={"text-high-emphasis py-2.5 px-4 rounded-[10px] transition-all duration-200 cursor-pointer text-left hover:bg-error"} onClick={endEventCb(id)}>End Event</button>}
+                                {isOwner && status != 1 && <button className={"text-high-emphasis py-2.5 px-4 rounded-[10px] transition-all duration-200 cursor-pointer text-left hover:bg-error"} onClick={deleteEventCb(id)}>Delete Event</button>}
                             </div>
                         </div>
-                        <button className={classNames("py-1 px-2.5 bg-primary-3 text-[white] rounded-[5px] flex items-center ml-2.5", {"bg-[#383129] text-primary-1": is_interested})} onClick={setIsInterestedCb(id)}><img className="mr-2.5" src={is_interested ? checkMark : bellIcon}/>Interested</button>
+                        <button className={classNames("py-1 px-2.5 bg-primary-3 text-high-emphasis rounded-[5px] flex items-center ml-2.5", {"bg-[#383129] !text-primary-1": is_interested})} onClick={setIsInterestedCb(id)}><img className="mr-2.5" src={is_interested ? checkMark : bellIcon}/>Interested</button>
                     </div>
                 </div>
             </div>
