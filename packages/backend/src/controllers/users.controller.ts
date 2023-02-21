@@ -338,7 +338,7 @@ class Controller {
             return
         }
 
-        const result = await BanService.banUser(userId, req.body.reason)
+        const result = await BanService.banUser(userId, req.body.reason, res.locals.user.id)
 
         if(result) {
             res.json({

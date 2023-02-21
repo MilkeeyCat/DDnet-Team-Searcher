@@ -35,7 +35,6 @@ export const Header = () => {
         dispatch(setIsCreateEventModalHidden(false))
     }
 
-
     return (
         <header className={classNames("py-5 w-full z-[1] bg-[rgba(0,0,0,.36)]", {"absolute t-0": !isAuthed})}>
             <div className="flex justify-between items-end max-w-[1110px] mx-auto">

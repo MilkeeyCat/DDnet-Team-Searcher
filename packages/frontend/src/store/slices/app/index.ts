@@ -118,6 +118,6 @@ export const appSlice = createSlice({
     }
 })
 
-export const { setMaps, setIsAuthed, setUserData, setIsCreateRunModalHidden, setIsCreateEventModalHidden, setIsEditHappeningModalHidden, setEditingHappeningId, setEditingHappeningType} = appSlice.actions
+export const { setMaps, setIsAuthed, setUserData, setIsCreateRunModalHidden, setIsCreateEventModalHidden, setIsEditHappeningModalHidden, setEditingHappeningId, setEditingHappeningType } = appSlice.actions
 
 export default appSlice.reducer

@@ -133,9 +133,13 @@ CREATE TABLE reports (
 CREATE TABLE banned_list (
     id BIGSERIAL PRIMARY KEY,
     user_id INT NOT NULL,
+    author_id INT NOT NULL,
     reason VARCHAR(255) DEFAULT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE,
+    FOREIGN KEY(author_id)
         REFERENCES users(id)
         ON DELETE CASCADE
 );

@@ -5,6 +5,7 @@ import happeningsReducer from "./slices/happenings"
 import { usersApi } from "../api/users-api"
 import { happeningsApi } from "../api/happenings-api"
 import { reviewsApi } from "../api/reviews-api"
+import { administrationApi } from "../api/administration-api"
 
 export const store = configureStore({
     reducer: {
@@ -13,10 +14,11 @@ export const store = configureStore({
         happeningsReducer,
         [usersApi.reducerPath]: usersApi.reducer,
         [happeningsApi.reducerPath]: happeningsApi.reducer,
-        [reviewsApi.reducerPath]: reviewsApi.reducer
+        [reviewsApi.reducerPath]: reviewsApi.reducer,
+        [administrationApi.reducerPath]: administrationApi.reducer
     },
     middleware: (getDefaultMiddleware) => (
-        getDefaultMiddleware().concat(usersApi.middleware, happeningsApi.middleware, reviewsApi.middleware)
+        getDefaultMiddleware().concat(usersApi.middleware, happeningsApi.middleware, reviewsApi.middleware, administrationApi.middleware)
     )
 })
 
