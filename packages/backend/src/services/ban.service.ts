@@ -1,4 +1,5 @@
 import { Db } from "./db.service.js"
+import { Service } from "./service.js"
 
 export type DBBan = {
     id: number,
@@ -8,7 +9,7 @@ export type DBBan = {
     created_at: string
 }
 
-class Service {
+class MyService<T extends object> extends Service<T> {
     async isUserBanned(userId: number): Promise<{banned: boolean, reason: string | null}> {
         const isBanned = await Db.query<{reason: string}>("SELECT reason FROM banned_list WHERE user_id = $1", [userId])
 
@@ -70,4 +71,4 @@ class Service {
     }
 }
 
-export const BanService = new Service()
+export const BanService = new MyService<DBBan>("banned_list")

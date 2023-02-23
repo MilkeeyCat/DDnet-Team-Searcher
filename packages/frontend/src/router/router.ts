@@ -9,6 +9,7 @@ import React from 'react'
 import { NotFound } from '../pages/NotFound'
 import { Roles } from '../pages/Roles'
 import { Reports } from '../pages/Reports'
+import { Users } from '../pages/Users'
 
 export interface IRoute {
     path: string
@@ -27,6 +28,7 @@ export enum RouteNames {
 
     ADMIN_ROLES = '/admin/roles',
     ADMIN_BANS = '/admin/bans',
+    ADMIN_USERS = '/admin/users',
     ADMIN_REPORTS = '/admin/reports',
 
     NOT_FOUND = '*',
@@ -73,6 +75,10 @@ export const privateRoute: IRoute[] = [
     {
         path: RouteNames.ADMIN_BANS,
         Component: Bans,
+    },
+    {
+        path: RouteNames.ADMIN_USERS,
+        Component: Users
     },
     {
         path: RouteNames.ADMIN_ROLES,

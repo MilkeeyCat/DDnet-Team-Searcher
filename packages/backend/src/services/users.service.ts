@@ -3,15 +3,22 @@ import bcrypt from "bcrypt"
 import { RegistrationRequest } from "@app/shared/types/RegistrationRequest.type.js";
 import { User, UserWithPassword, UserWithPermissions } from "@app/shared/types/User.type.js"
 import { RolesService } from "./roles.service.js";
-import { Permissions } from "@app/shared/types/Permissions.type.js";
+import { QueryResult } from "pg";
+import { Service } from "./service.js";
 
-export interface DBUser {
-    id: string;
-    username: string;
-    avatar: null | string;
+export type DBUser = {
+    id: number,
+    username: string,
+    email: string,
+    password: string,
+    avatar: null | string,
+    created_at: string,
+    updated_at: string,
+    tier: number,
+    verified: number
 }
 
-export class Service {
+export class MyService<T extends object> extends Service<T> {
     async register(data: RegistrationRequest): Promise<boolean> {
         try {
             const encryptedPassword = await bcrypt.hash(data.password, 10)
@@ -68,6 +75,10 @@ export class Service {
     async getRoles(userId: string) {
         const res = await Db.query(`SELECT roles.name, roles.color, roles.url, roles.can_delete_happenings, roles.can_edit_posts, roles.can_ban, roles.can_create_roles FROM users_roles INNER JOIN roles ON roles.id = users_roles.role_id WHERE users_roles.user_id = $1`, [userId])
     }
+
+    async getAll(): Promise<QueryResult<DBUser>> {
+        return await Db.query(`SELECT id::integer, username, email, avatar, created_at, updated_at, tier, verified FROM users`)
+    }
 }
 
-export const UsersService = new Service()
+export const UsersService = new MyService<Exclude<DBUser, "password">>("users")

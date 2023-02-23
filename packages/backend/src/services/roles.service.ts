@@ -2,6 +2,7 @@ import { Db } from "./db.service.js"
 import { QueryResult } from "pg"
 import { Role } from "@app/shared/types/Role.type.js"
 import { Permissions } from "@app/shared/types/Permissions.type.js"
+import { Service } from "./service.js"
 
 export type DBRoles = {
     id: number;
@@ -10,7 +11,7 @@ export type DBRoles = {
     url: string | null;
 } & Permissions
 
-class Service {
+class MyService<T extends object> extends Service<T> {
     async getUserRoles(userId: number): Promise<QueryResult<Role>> {
         return await Db.query(`SELECT roles.name, roles.color, roles.url FROM users_roles INNER JOIN roles ON roles.id = users_roles.role_id WHERE users_roles.user_id = $1`, [userId])
     }
@@ -65,6 +66,10 @@ class Service {
             return false
         }
     }
+
+    async getAll(): Promise<QueryResult<DBRoles>> {
+        return await Db.query("SELECT id::integer, name, color, can_delete_happenings, can_ban, can_edit_posts, can_create_roles FROM roles")
+    }
 }
 
-export const RolesService = new Service()
+export const RolesService = new MyService<DBRoles>("roles")

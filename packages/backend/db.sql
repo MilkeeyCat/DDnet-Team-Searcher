@@ -117,7 +117,7 @@ CREATE TABLE followers (
         ON DELETE CASCADE
 );
 
-CREATE TABLE reports (
+CREATE TABLE reports (-- Add created_at column
     id BIGSERIAL PRIMARY KEY,
     author_id INT NOT NULL,
     reported_user_id INT NOT NULL,

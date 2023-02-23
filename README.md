@@ -1,3 +1,6 @@
+# UPD. I got unmotivated and Im stopping doing this.
+## What's the point of doing this website if im blocked in Ddnet discord anyways. And it sucks to do all of this alone :\
+
 # DDnet team searcher
 
 I'm making this thing because it's one of the hardest problems in the game. You simply cant find anybody to play with. And on this website(if i finish it) you will be able to find homies.
